@@ -49,98 +49,14 @@ motor LeftRear = motor(PORT11, ratio6_1, true); //done
 //Intake Motors
 motor FrontIntakeRight = motor(PORT17, ratio6_1, true); //done
 motor FrontIntakeLeft = motor(PORT14, true); //done
-motor RearIntake = motor(PORT9, false); //done
+motor Outtake = motor(PORT9, false); //done
 
 //Motor Groups
 motor_group LeftMotorGroup = motor_group(LeftFront, LeftMiddle, LeftRear);
 motor_group RightMotorGroup = motor_group(RightFront, RightMiddle, RightRear);
 motor_group IntakeFrontGroup = motor_group(FrontIntakeRight, FrontIntakeLeft);
 motor_group AllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear);
-motor_group TrulyAllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear, FrontIntakeRight, FrontIntakeLeft, RearIntake);
-
-// void driveForwardP(double distance) {
-//     RightMotorGroup.resetPosition();
-//     double w_radius = 3.25 / 2.0; //wheel
-//     double r_conv = 3.14159 / 180.0; //radian conversion
-//     double gear_ratio = 36.0 / 48.0; //drive train gear ratio
-//     double target = distance / (r_conv * w_radius * gear_ratio);
-
-//     while(RightMotorGroup.position(degrees) < target) {
-//         double proportion = target - RightMotorGroup.position(degrees);
-//         double kp = .09;
-//         double min_speed = 1;
-//         double max_speed = 80;
-//         double speed = proportion * kp + min_speed; //one way to break out of the loop
-
-//         if (speed > max_speed) speed = max_speed;
-
-//         LeftMotorGroup.spin(fwd, speed, pct);                                                                                                                                          //EVAn LIKES PIE!                                                                                                                                  
-//         RightMotorGroup.spin(fwd, speed, pct);
-//     }
-
-//     LeftMotorGroup.stop();
-//     RightMotorGroup.stop();
-// }
-
-// double wrapAngle(double angle) {
-//     double wrapped = fmod(angle, 360.0);
-//     if (wrapped < 0) wrapped += 360.0;
-//     return wrapped;
-// }
-
-// double clockwiseDistance(double currentAngle, double targetAngle) {
-//   double distance = targetAngle - currentAngle;
-//   if (distance < 0) {
-//     distance +=360.0;
-//   }
-//   return distance;
-// }
-
-// double counterclockwiseDistance(double currentAngle, double targetAngle) {
-//   double distance = currentAngle - targetAngle;
-//   if (distance < 0) {
-//     distance +=360;
-//   }
-//   return distance;
-// }
-
-// void turnRightToHeading(double targetHeading){
-//     double kp = .4;
-//     targetHeading = wrapAngle(targetHeading);
-
-//     double currentHeading = wrapAngle(inert.heading(degrees));
-//     double error = clockwiseDistance(currentHeading, targetHeading);
-//     double speed = error * kp;
-
-//     while(fabs(error) > 2.0){
-//         currentHeading = wrapAngle(inert.heading(degrees));
-//         error = clockwiseDistance(currentHeading, targetHeading);
-//         speed = error * kp;
-//         LeftMotorGroup.spin(forward, speed, pct);
-//         RightMotorGroup.spin(reverse, speed, pct);
-//     }
-//     LeftMotorGroup.stop(brake);
-//     RightMotorGroup.stop(brake);   
-// }
-
-// void turnLeftToHeading(double targetHeading){
-//     double kp = .4;
-//     targetHeading = wrapAngle(targetHeading);
-
-//     double currentHeading = wrapAngle(inert.heading(degrees));
-//     double error = counterclockwiseDistance(currentHeading, targetHeading);
-//     double speed = error * kp;
-
-//     while(fabs(error) > 2.0){
-//         currentHeading = wrapAngle(inert.heading(degrees));
-//         error = counterclockwiseDistance(currentHeading, targetHeading);
-//         speed = error * kp;
-//         LeftMotorGroup.spin(reverse, speed, pct);
-//         RightMotorGroup.spin(forward, speed, pct);
-//     }
-//     LeftMotorGroup.stop(brake);
-//     RightMotorGroup.stop(brake);   
-// }
+motor_group TrulyAllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear, FrontIntakeRight, FrontIntakeLeft, Outtake);
 
 void pre_auton(void) {
   tongue_piston.set(false);
@@ -172,36 +88,36 @@ LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1
 RightMotorGroup.spin(forward, (Controller1.Axis3.position() - ((Controller1.Axis1.position()/2)))*0.12, volt);
 if (Controller1.ButtonX.pressing()) { //Score middle goal
 IntakeFrontGroup.spin(forward, 100, pct);
-RearIntake.spin(reverse, 100, pct);
+Outtake.spin(reverse, 100, pct);
 scoring_piston.set(true); //Retract scoring piston to score middle goal
 } else if (Controller1.ButtonB.pressing()) { //Outtake all gems from bot
 IntakeFrontGroup.spin(reverse, 100, pct);
-RearIntake.spin(forward, 100, pct);
+Outtake.spin(forward, 100, pct);
 scoring_piston.set(false); //Extend scoring piston to outtake from middle goal
 } else if (Controller1.ButtonL1.pressing()) { //Score top goal
 IntakeFrontGroup.spin(forward, 100, pct);
-RearIntake.spin(reverse, 100, pct);
+Outtake.spin(reverse, 100, pct);
 scoring_piston.set(false); //Extend scoring piston to score top goal
 } else if (Controller1.ButtonL2.pressing()) { //Outtake all gems from bot
 IntakeFrontGroup.spin(reverse, 100, pct);
-RearIntake.spin(reverse, 100, pct);
+Outtake.spin(forward, 100, pct);
 scoring_piston.set(false); //Extend scoring piston to outtake from top goal
 } else if (Controller1.ButtonR1.pressing()) { //Storage (Intake gems to top but hold there)
 IntakeFrontGroup.spin(forward, 100, pct);
-RearIntake.spin(forward, 100, pct);
+Outtake.spin(forward, 100, pct);
 scoring_piston.set(true); //Retract scoring piston to store gems
 } else if (Controller1.ButtonR2.pressing()) { //Outtake all gems from bot
   IntakeFrontGroup.spin(reverse, 100, pct);
-  RearIntake.spin(reverse, 100, pct);
+  Outtake.spin(forward, 100, pct);
   scoring_piston.set(true); //Retract scoring piston to store gems
 } else {
   IntakeFrontGroup.stop(brake);
-  RearIntake.stop(brake);
+  Outtake.stop(brake);
 }
 }
 }
 
-void singbut() { //Toggle pistons with button presses
+void singlebutton() { //Toggle pistons with button presses
 while(true) {
 if(Controller1.ButtonLeft.pressing()){
 while(Controller1.ButtonLeft.pressing()){
@@ -233,7 +149,7 @@ task::sleep(25);
 }
 
 int main() {
-  thread a(singbut);
+  thread a(singlebutton);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();

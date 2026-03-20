@@ -10,6 +10,7 @@ extern motor_group RightMotorGroup;
 
 //Sensors
 extern inertial inert;
+extern brain Brain;
 
 void turnRightProportional(double target) {   
     //Propotional Turn Right
@@ -173,29 +174,29 @@ void driveForwardPD(double distance, double max_speed) {   //inches
     double target = inchesToDegrees(distance); 
 
     double derivative;
-    double error = target - LeftMotors.position(degrees);
+    double error = target - LeftMotorGroup.position(degrees);
     double previousError = error;
 
-    LeftMotors.resetPosition();
+    LeftMotorGroup.resetPosition();
 
     while(fabs(error) > 2.0) { //
         previousError = error;
-        error = target - LeftMotors.position(degrees); 
+        error = target - LeftMotorGroup.position(degrees); 
         derivative = error - previousError;
         speed = error*kp + derivative*kd; 
         if (speed > max_speed) speed = max_speed;
         if (speed < min_speed) speed = min_speed;
-        LeftMotors.spin(fwd, speed, pct);
-        RightMotors.spin(fwd, speed, pct);
+        LeftMotorGroup.spin(fwd, speed, pct);
+        RightMotorGroup.spin(fwd, speed, pct);
         wait(10, msec);
     }
-    LeftMotors.stop(brake);
-    RightMotors.stop(brake);
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);
 }
 
 void driveForwardStraightPD(double distance, double max_speed) {   //inches
     //Drive Forward Proportional
-    LeftMotors.resetPosition();
+    LeftMotorGroup.resetPosition();
     double target_d = inchesToDegrees(distance); //Convert Inches to Motor Encoder Degrees
 
     double kp_d = .5;
@@ -204,7 +205,7 @@ void driveForwardStraightPD(double distance, double max_speed) {   //inches
     double speed = max_speed;
 
     double derivative_d;
-    double error_d = target_d - LeftMotors.position(degrees);
+    double error_d = target_d - LeftMotorGroup.position(degrees);
     double previousError_d = error_d;
 
     inert.resetRotation();
@@ -221,7 +222,7 @@ void driveForwardStraightPD(double distance, double max_speed) {   //inches
     while(fabs(error_d) > 2.0) { //
         //distance pd calcs
         previousError_d = error_d;
-        error_d = target_d - LeftMotors.position(degrees); 
+        error_d = target_d - LeftMotorGroup.position(degrees); 
         speed = error_d*kp_d + derivative_d*kd_d; //one way to break out of the loop
         derivative_d = error_d - previousError_d;
         
@@ -234,13 +235,13 @@ void driveForwardStraightPD(double distance, double max_speed) {   //inches
         if (speed > max_speed) speed = max_speed;
         if (speed < min_speed) speed = min_speed;
 
-        LeftMotors.spin(fwd, speed + speed_correction, pct);
-        RightMotors.spin(fwd, speed - speed_correction, pct);
+        LeftMotorGroup.spin(fwd, speed + speed_correction, pct);
+        RightMotorGroup.spin(fwd, speed - speed_correction, pct);
     
         wait(10, msec);
     }
-    LeftMotors.stop(brake);
-    RightMotors.stop(brake);
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);
 }
 
 void turnRightToHeadingPD(double targetHeading){

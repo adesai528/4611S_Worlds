@@ -3,7 +3,6 @@
 using namespace vex;
 
 // A global instance of vex::brain used for printing to the V5 brain screen
-extern vex::brain       Brain;
 
 // VEXcode device constructors
 extern controller controller1;
@@ -20,8 +19,8 @@ extern motor LeftMotor;
 extern motor RightMotor;
 
 // Motor Groups
-extern motor_group LeftMotors;
-extern motor_group RightMotors;
+extern motor_group LeftMotorGroup;
+extern motor_group RightMotorGroup;
 
 //Sensors
 extern inertial inert;

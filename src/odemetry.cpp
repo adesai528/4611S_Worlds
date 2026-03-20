@@ -12,6 +12,7 @@ extern motor_group RightMotors;
 
 //Sensors
 extern inertial inert;
+extern brain Brain;
 
 //Globals
 double XPosition = 0.0;

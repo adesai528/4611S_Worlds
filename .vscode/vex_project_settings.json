@@ -5,11 +5,11 @@
 	},
 	"project": {
 		"name": "4611S_Worlds",
-		"description": "4611S Official Worlds Code - Collaboration with 4610C",
+		"description": "4611S Official Worlds Code",
 		"creationDate": "3/17/2026, 8:54:52 PM",
 		"platform": "V5",
 		"language": "cpp",
-		"slot": 4,
+		"slot": 2,
 		"sdkVersion": "V5_20240802_15_00_00",
 		"cpp": {
 			"includePath": [],
