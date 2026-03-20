@@ -18,22 +18,21 @@ competition Competition;
 brain Brain;
 controller Controller1 = controller(primary);
 //X,Y are useless, B = tongue, x and b for mid score, left and right mid descore
-//Auton Selection
-int autonSelection = 0;
-pot PotSelector = pot(Brain.ThreeWirePort.D);
+
 //Bools
 bool high_descore_bool = false;
 bool middle_descore_bool = false;
 bool tongue_bool = false;
 //Pneumatics Pistons
 digital_out tongue_piston = digital_out(Brain.ThreeWirePort.D); //Tongue
-digital_out high_descore = digital_out(Brain.ThreeWirePort.H); //High Descore
+digital_out left_descore = digital_out(Brain.ThreeWirePort.F); //Left Descore
+digital_out right_descore = digital_out(Brain.ThreeWirePort.G); //Right Descore
 digital_out scoring_piston = digital_out(Brain.ThreeWirePort.B); //Scoring
 digital_out middle_descore = digital_out(Brain.ThreeWirePort.E); //Middle Descore
 
 //Sensors
 inertial inert = inertial(PORT5);
-distance distanceSensor  = distance(PORT20);
+distance distanceSensor  = distance(PORT10);
 
 //Individual Motors
 motor RightFront = motor(PORT18, ratio6_1, false); //done
@@ -142,70 +141,27 @@ void turnLeftToHeading(double targetHeading){
 void pre_auton(void) {
   tongue_piston.set(false);
   scoring_piston.set(true);
-  high_descore.set(true);
   inert.calibrate();
-  while(!Competition.isEnabled()) {
-    int potValue = PotSelector.value(analogUnits::range12bit);
-    if (potValue <= 1023.75) {
-      autonSelection = 1; // Left Red AWP
-      } else if (potValue <= 2047.5) {
-        autonSelection = 2; // Left Blue AWP
-      } else if (potValue <= 3071.25) {
-        autonSelection = 3; // Right Red
-      } else {
-        autonSelection = 4; // Skills
-      }
     Brain.Screen.clearScreen();
-    Brain.Screen.printAt(5, 20, "Selected Auton: %d", autonSelection);
+    Brain.Screen.printAt(5, 20, "Selected Auton: %d");
     Brain.Screen.printAt(5, 40, "Auton 1: Left AWP");
     Brain.Screen.printAt(5, 60, "Auton 2: Solo Auton");
     Brain.Screen.printAt(5, 80, "Auton Skills: Dead Reckoning");
     Brain.Screen.printAt(5, 100, "Auton Skills: Inertial");
     task::sleep(50);
   }
-}
+
 
 void autonomous(void) {
   inert.setHeading(270, degrees);
-  switch(autonSelection) {
-    //LEFT AWP 🔻
-    case 1:
-    Brain.Screen.clearScreen(); 
-    Brain.Screen.printAt(5, 40, "Running Left AWP Auton");
-    Brain.Screen.setFillColor(blue);
-    break;
-    
-    //SOLO AUTONOMOUS 🔻
-    case 2:
-    Brain.Screen.clearScreen(); 
-    Brain.Screen.printAt(5, 40, "Running Solo Auton");
-    Brain.Screen.setFillColor(blue);
-    break;
-    
-    //SKILLS STARTING IN PARK (20)🔻
-    case 3: 
-    Brain.Screen.clearScreen(); 
-    Brain.Screen.printAt(5, 40, "Running Skills 20"); 
-    break;
-    
-    //SKILLS VIA INERTIAL 🔻
-    case 4:
-    Brain.Screen.clearScreen(); 
-    Brain.Screen.printAt(5, 40, "Running Skills Inertial");     
-    break;
-    
-    //DEFAULT FUNCTION 🔻
-    default: 
-    Brain.Screen.clearScreen(); 
-    Brain.Screen.printAt(5, 40, "ERROR: No Auton Selected!");
-    break; // Do nothing
-    }
+  //Auto Here
 }
 
 void usercontrol(void) {
 tongue_piston.set(false);
 scoring_piston.set(true);
-high_descore.set(true);
+left_descore.set(true);
+right_descore.set(true);
 middle_descore.set(false);
 while (1) {
 LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1.position()/2)))*0.12, volt);
@@ -267,7 +223,8 @@ while(Controller1.ButtonUp.pressing()){
   }
   high_descore_bool = !high_descore_bool;
 }
-high_descore.set(high_descore_bool);
+left_descore.set(high_descore_bool);
+right_descore.set(high_descore_bool);
 task::sleep(25);
 }
 
