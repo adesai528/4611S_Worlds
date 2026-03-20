@@ -32,7 +32,11 @@ digital_out middle_descore = digital_out(Brain.ThreeWirePort.E); //Middle Descor
 
 //Sensors
 inertial inert = inertial(PORT5);
-distance distanceSensor  = distance(PORT10);
+distance distanceFront  = distance(PORT10);
+distance distanceBack = distance(PORT2);
+distance distanceLeft = distance(PORT4);
+distance distanceRight = distance(PORT6);
+distance distanceDown = distance(PORT20);
 
 //Individual Motors
 motor RightFront = motor(PORT18, ratio6_1, false); //done
