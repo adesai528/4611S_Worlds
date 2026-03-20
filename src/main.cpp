@@ -194,8 +194,8 @@ scoring_piston.set(true);
 high_descore.set(true);
 middle_descore.set(false);
 while (1) {
-LeftMotorGroup.spin(forward, Controller1.Axis3.position() + ((Controller1.Axis1.position()*0.5 /*change decimal for turning sensitivity*/)), pct);
-RightMotorGroup.spin(forward, Controller1.Axis3.position() - ((Controller1.Axis1.position()*0.5 /*change decimal for turning sensitivity*/)), pct);
+LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1.position()/2)))*0.12, volt);
+RightMotorGroup.spin(forward, (Controller1.Axis3.position() - ((Controller1.Axis1.position()/2)))*0.12, volt);
 if (Controller1.ButtonX.pressing()) { //Score middle goal
 IntakeFrontGroup.spin(forward, 100, pct);
 RearIntake.spin(reverse, 100, pct);
