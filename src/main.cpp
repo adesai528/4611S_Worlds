@@ -1,4 +1,18 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.cpp                                                  */
+/*    Author:       arjundesai                                                */
+/*    Created:      3/17/2026, 8:54:52 PM                                     */
+/*    Description:  V5 project                                                */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+
 #include "vex.h"
+#include "robotconfig.h"
+#include "common.h"
+#include "simplemotion.h"
+#include "proportionalmotion.h"
+#include "odometry.h"
 using namespace vex;
 competition Competition;
 brain Brain;
