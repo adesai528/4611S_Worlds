@@ -58,89 +58,89 @@ motor_group IntakeFrontGroup = motor_group(FrontIntakeRight, FrontIntakeLeft);
 motor_group AllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear);
 motor_group TrulyAllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear, FrontIntakeRight, FrontIntakeLeft, RearIntake);
 
-void driveForwardP(double distance) {
-    RightMotorGroup.resetPosition();
-    double w_radius = 3.25 / 2.0; //wheel
-    double r_conv = 3.14159 / 180.0; //radian conversion
-    double gear_ratio = 36.0 / 48.0; //drive train gear ratio
-    double target = distance / (r_conv * w_radius * gear_ratio);
+// void driveForwardP(double distance) {
+//     RightMotorGroup.resetPosition();
+//     double w_radius = 3.25 / 2.0; //wheel
+//     double r_conv = 3.14159 / 180.0; //radian conversion
+//     double gear_ratio = 36.0 / 48.0; //drive train gear ratio
+//     double target = distance / (r_conv * w_radius * gear_ratio);
 
-    while(RightMotorGroup.position(degrees) < target) {
-        double proportion = target - RightMotorGroup.position(degrees);
-        double kp = .09;
-        double min_speed = 1;
-        double max_speed = 80;
-        double speed = proportion * kp + min_speed; //one way to break out of the loop
+//     while(RightMotorGroup.position(degrees) < target) {
+//         double proportion = target - RightMotorGroup.position(degrees);
+//         double kp = .09;
+//         double min_speed = 1;
+//         double max_speed = 80;
+//         double speed = proportion * kp + min_speed; //one way to break out of the loop
 
-        if (speed > max_speed) speed = max_speed;
+//         if (speed > max_speed) speed = max_speed;
 
-        LeftMotorGroup.spin(fwd, speed, pct);                                                                                                                                          //EVAn LIKES PIE!                                                                                                                                  
-        RightMotorGroup.spin(fwd, speed, pct);
-    }
+//         LeftMotorGroup.spin(fwd, speed, pct);                                                                                                                                          //EVAn LIKES PIE!                                                                                                                                  
+//         RightMotorGroup.spin(fwd, speed, pct);
+//     }
 
-    LeftMotorGroup.stop();
-    RightMotorGroup.stop();
-}
+//     LeftMotorGroup.stop();
+//     RightMotorGroup.stop();
+// }
 
-double wrapAngle(double angle) {
-    double wrapped = fmod(angle, 360.0);
-    if (wrapped < 0) wrapped += 360.0;
-    return wrapped;
-}
+// double wrapAngle(double angle) {
+//     double wrapped = fmod(angle, 360.0);
+//     if (wrapped < 0) wrapped += 360.0;
+//     return wrapped;
+// }
 
-double clockwiseDistance(double currentAngle, double targetAngle) {
-  double distance = targetAngle - currentAngle;
-  if (distance < 0) {
-    distance +=360.0;
-  }
-  return distance;
-}
+// double clockwiseDistance(double currentAngle, double targetAngle) {
+//   double distance = targetAngle - currentAngle;
+//   if (distance < 0) {
+//     distance +=360.0;
+//   }
+//   return distance;
+// }
 
-double counterclockwiseDistance(double currentAngle, double targetAngle) {
-  double distance = currentAngle - targetAngle;
-  if (distance < 0) {
-    distance +=360;
-  }
-  return distance;
-}
+// double counterclockwiseDistance(double currentAngle, double targetAngle) {
+//   double distance = currentAngle - targetAngle;
+//   if (distance < 0) {
+//     distance +=360;
+//   }
+//   return distance;
+// }
 
-void turnRightToHeading(double targetHeading){
-    double kp = .4;
-    targetHeading = wrapAngle(targetHeading);
+// void turnRightToHeading(double targetHeading){
+//     double kp = .4;
+//     targetHeading = wrapAngle(targetHeading);
 
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = clockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
+//     double currentHeading = wrapAngle(inert.heading(degrees));
+//     double error = clockwiseDistance(currentHeading, targetHeading);
+//     double speed = error * kp;
 
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = clockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(forward, speed, pct);
-        RightMotorGroup.spin(reverse, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
-}
+//     while(fabs(error) > 2.0){
+//         currentHeading = wrapAngle(inert.heading(degrees));
+//         error = clockwiseDistance(currentHeading, targetHeading);
+//         speed = error * kp;
+//         LeftMotorGroup.spin(forward, speed, pct);
+//         RightMotorGroup.spin(reverse, speed, pct);
+//     }
+//     LeftMotorGroup.stop(brake);
+//     RightMotorGroup.stop(brake);   
+// }
 
-void turnLeftToHeading(double targetHeading){
-    double kp = .4;
-    targetHeading = wrapAngle(targetHeading);
+// void turnLeftToHeading(double targetHeading){
+//     double kp = .4;
+//     targetHeading = wrapAngle(targetHeading);
 
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = counterclockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
+//     double currentHeading = wrapAngle(inert.heading(degrees));
+//     double error = counterclockwiseDistance(currentHeading, targetHeading);
+//     double speed = error * kp;
 
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = counterclockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(reverse, speed, pct);
-        RightMotorGroup.spin(forward, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
-}
+//     while(fabs(error) > 2.0){
+//         currentHeading = wrapAngle(inert.heading(degrees));
+//         error = counterclockwiseDistance(currentHeading, targetHeading);
+//         speed = error * kp;
+//         LeftMotorGroup.spin(reverse, speed, pct);
+//         RightMotorGroup.spin(forward, speed, pct);
+//     }
+//     LeftMotorGroup.stop(brake);
+//     RightMotorGroup.stop(brake);   
+// }
 
 void pre_auton(void) {
   tongue_piston.set(false);
