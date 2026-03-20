@@ -61,6 +61,8 @@ motor_group TrulyAllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, 
 void pre_auton(void) {
   tongue_piston.set(false);
   scoring_piston.set(true);
+  left_descore.set(false);
+  right_descore.set(false);
   inert.calibrate();
     Brain.Screen.clearScreen();
     Brain.Screen.printAt(5, 20, "Selected Auton: %d");
@@ -80,36 +82,36 @@ void autonomous(void) {
 void usercontrol(void) {
 tongue_piston.set(false);
 scoring_piston.set(true);
-left_descore.set(true);
-right_descore.set(true);
+left_descore.set(false);
+right_descore.set(false);
 middle_descore.set(false);
+
 while (1) {
-LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1.position()/2)))*0.12, volt);
-RightMotorGroup.spin(forward, (Controller1.Axis3.position() - ((Controller1.Axis1.position()/2)))*0.12, volt);
+LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1.position() * 0.75)))*0.12, volt);
+RightMotorGroup.spin(forward, (Controller1.Axis3.position() - ((Controller1.Axis1.position() * 0.75)))*0.12, volt);
 if (Controller1.ButtonX.pressing()) { //Score middle goal
 IntakeFrontGroup.spin(forward, 100, pct);
 Outtake.spin(reverse, 100, pct);
-scoring_piston.set(true); //Retract scoring piston to score middle goal
+scoring_piston.set(false); //Retract scoring piston to score middle goal
 } else if (Controller1.ButtonB.pressing()) { //Outtake all gems from bot
 IntakeFrontGroup.spin(reverse, 100, pct);
 Outtake.spin(forward, 100, pct);
-scoring_piston.set(false); //Extend scoring piston to outtake from middle goal
+scoring_piston.set(true); //Extend scoring piston to outtake from middle goal
 } else if (Controller1.ButtonL1.pressing()) { //Score top goal
 IntakeFrontGroup.spin(forward, 100, pct);
 Outtake.spin(reverse, 100, pct);
-scoring_piston.set(false); //Extend scoring piston to score top goal
+scoring_piston.set(true); //Extend scoring piston to score top goal
 } else if (Controller1.ButtonL2.pressing()) { //Outtake all gems from bot
 IntakeFrontGroup.spin(reverse, 100, pct);
 Outtake.spin(forward, 100, pct);
-scoring_piston.set(false); //Extend scoring piston to outtake from top goal
+scoring_piston.set(true); //Extend scoring piston to outtake from top goal
 } else if (Controller1.ButtonR1.pressing()) { //Storage (Intake gems to top but hold there)
 IntakeFrontGroup.spin(forward, 100, pct);
-Outtake.spin(forward, 100, pct);
-scoring_piston.set(true); //Retract scoring piston to store gems
+scoring_piston.set(false); //Retract scoring piston to store gems
 } else if (Controller1.ButtonR2.pressing()) { //Outtake all gems from bot
   IntakeFrontGroup.spin(reverse, 100, pct);
   Outtake.spin(forward, 100, pct);
-  scoring_piston.set(true); //Retract scoring piston to store gems
+  scoring_piston.set(false); //Retract scoring piston to store gems
 } else {
   IntakeFrontGroup.stop(brake);
   Outtake.stop(brake);
@@ -119,34 +121,32 @@ scoring_piston.set(true); //Retract scoring piston to store gems
 
 void singlebutton() { //Toggle pistons with button presses
 while(true) {
-if(Controller1.ButtonLeft.pressing()){
-while(Controller1.ButtonLeft.pressing()){
-    task::sleep(10);
+  if(Controller1.ButtonLeft.pressing()){
+  while(Controller1.ButtonLeft.pressing()){
+      task::sleep(10);
+    }
+    middle_descore_bool = !middle_descore_bool;
   }
-  middle_descore_bool = !middle_descore_bool;
-}
-middle_descore.set(middle_descore_bool);
+  middle_descore.set(middle_descore_bool);
 
-if(Controller1.ButtonDown.pressing()){
-while(Controller1.ButtonDown.pressing()){
-    task::sleep(10);
+  if(Controller1.ButtonDown.pressing()){
+  while(Controller1.ButtonDown.pressing()){
+      task::sleep(10);
+    }
+    tongue_bool = !tongue_bool;
   }
-  tongue_bool = !tongue_bool;
-}
-tongue_piston.set(tongue_bool);
-task::sleep(25);
-}
+  tongue_piston.set(tongue_bool);
 
-if(Controller1.ButtonUp.pressing()){
-while(Controller1.ButtonUp.pressing()){
-    task::sleep(10);
+
+  if(Controller1.ButtonUp.pressing()){
+    waitUntil(!Controller1.ButtonUp.pressing());
+    left_descore.set(!left_descore.value());
+    right_descore.set(!right_descore.value());
   }
-  high_descore_bool = !high_descore_bool;
-}
-left_descore.set(high_descore_bool);
-right_descore.set(high_descore_bool);
-task::sleep(25);
-}
+
+  task::sleep(20);
+  }
+  }
 
 int main() {
   thread a(singlebutton);
