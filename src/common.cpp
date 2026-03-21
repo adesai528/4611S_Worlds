@@ -12,6 +12,7 @@ extern motor_group RightMotorGroup;
 //Sensors
 extern inertial inert;
 extern brain Brain;
+extern controller controller1;
 
 void intialize(){
     inert.calibrate();

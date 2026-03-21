@@ -1,12 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       arjundesai                                                */
-/*    Created:      3/17/2026, 8:54:52 PM                                     */
-/*    Description:  V5 project                                                */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
-
 #include "vex.h"
 #include "robotconfig.h"
 #include "common.h"
@@ -29,7 +20,7 @@ void pre_auton(void) {
   Brain.Screen.printAt(5, 80, "Auton Skills: Dead Reckoning");
   Brain.Screen.printAt(5, 100, "Auton Skills: Inertial");
   task::sleep(20);
-  }
+}
 
 
 void autonomous(void) {
@@ -112,21 +103,20 @@ int main() {
 }
 
 /*
-BUTTON OVERVIEW FOR DRIVERS:
-
-UP: SINGLE BUTTON HIGH DESCORE
-DOWN: SINGLE BUTTON TONGUE
-LEFT: SINGLE BUTTON MIDDLE DESCORE
-RIGHT: UNUSED
-X: SCORE MIDDLE GOAL
-B: OUTTAKE ALL GEMS FROM BOT
-Y: UNUSED
-A: UNUSED
-L1: SCORE TOP GOAL
-L2: OUTTAKE ALL GEMS FROM BOT
-R1: STORAGE (INTAKE GEMS TO TOP BUT HOLD THERE)
-R2: OUTTAKE ALL GEMS FROM BOT
-CONTROLLER JOYSTICK 3: FORWARD AND BACKWARD
-CONTROLLER JOYSTICK 1: LEFT AND RIGHT
+  BUTTON OVERVIEW FOR DRIVERS:
+  UP: SINGLE BUTTON HIGH DESCORE
+  DOWN: SINGLE BUTTON TONGUE
+  LEFT: SINGLE BUTTON MIDDLE DESCORE
+  RIGHT: UNUSED
+  X: SCORE MIDDLE GOAL
+  B: OUTTAKE ALL GEMS FROM BOT
+  Y: UNUSED
+  A: UNUSED
+  L1: SCORE TOP GOAL
+  L2: OUTTAKE ALL GEMS FROM BOT
+  R1: STORAGE (INTAKE GEMS TO TOP BUT HOLD THERE)
+  R2: OUTTAKE ALL GEMS FROM BOT
+  CONTROLLER JOYSTICK 3: FORWARD AND BACKWARD
+  CONTROLLER JOYSTICK 1: LEFT AND RIGHT
 
 */

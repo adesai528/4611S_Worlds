@@ -166,7 +166,7 @@ void turnLeftToHeading(double targetHeading){
 void driveForwardPD(double distance, double max_speed) {   //inches
     //Drive Forward Proportional
     double kp = .5;
-    double kd = .05;
+    double kd = 0;
     double min_speed = .25;
     double speed = max_speed;
 
