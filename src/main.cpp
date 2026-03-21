@@ -95,13 +95,13 @@ void pre_auton(void) {
         Brain.Screen.printAt(5, 140, "RightLB");
         break;
       case 5:
-        Brain.Screen.printAt(5, 140, "Auton 6");
+        Brain.Screen.printAt(5, 140, "Left7LPush");
         break;
       case 6:
-        Brain.Screen.printAt(5, 140, "Auton 7");
+        Brain.Screen.printAt(5, 140, "Right7RPush");
         break;
       case 7:
-        Brain.Screen.printAt(5, 140, "Auton 8");
+        Brain.Screen.printAt(5, 140, "One Inch");
         break;
     }
     if(Brain.Screen.pressing()){
@@ -178,10 +178,77 @@ void autonomous(void) {
   scoring_piston.set(true);
   Outtake.spin(reverse, 100, pct);      
   break;
-    case 1:         
-      break;
+    case 1: 
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(forward, 100, pct);
+  driveForwardPD(9, 25);
+  turnRightToHeading(0);
+  driveForwardPD(30, 25);
+  turnLeftToHeading(210);
+  driveReverseStraight(7, 25);
+  scoring_piston.set(false);
+  Outtake.spin(reverse, 70, pct);
+  wait(2000, msec);
+  driveForwardPD(40, 25);
+  turnLeftToHeadingTurn(180);
+  AllMotorGroup.spin(forward, 25, pct);
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(forward, 100, pct);
+  wait(1500, msec);
+  driveReverseStraight(28, 60);
+  scoring_piston.set(true);
+  Outtake.spin(reverse, 100, pct); 
+  break;
     case 2:
     inert.setHeading(270, degrees);
+  driveForwardPD(34, 70);
+  tongue_piston.set(true);
+  wait(100, msec);
+  turnLeftToHeading(180);
+  AllMotorGroup.spin(forward, 30, pct);
+  wait(300, msec);
+  AllMotorGroup.spin(forward, 10, pct);
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(forward, 100, pct);
+  wait(525, msec);
+  driveReverseStraight(28.5, 70);
+  wait(100, msec);
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(reverse, 100, pct);
+  wait(800, msec);
+  tongue_piston.set(false);
+  Outtake.stop(brake);
+  turnLeftToHeadingTurn(80);
+  IntakeFrontGroup.spin(forward, 100, pct);
+  driveForwardPD(28, 30);
+  turnRightToHeading(210);
+  driveReverseStraight(9, 35);
+  scoring_piston.set(false);
+  Outtake.spin(reverse, 70, pct);
+    break;
+  case 3:
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(forward, 100, pct);
+  driveForwardPD(9, 25);
+  turnRightToHeading(0);
+  driveForwardPD(30, 25);
+  turnRightToHeading(45);
+  driveForwardStraight(7, 15);
+  Outtake.spin(forward, 100, pct);
+  IntakeFrontGroup.spin(reverse, 50, pct);
+  wait(2000, msec);
+  driveReverseStraight(40, 25);
+  turnLeftToHeadingTurn(180);
+  AllMotorGroup.spin(forward, 25, pct);
+  IntakeFrontGroup.spin(forward, 100, pct);
+  Outtake.spin(forward, 100, pct);
+  wait(1500, msec);
+  driveReverseStraight(28, 60);
+  scoring_piston.set(true);
+  Outtake.spin(reverse, 100, pct);
+    break;
+  case 4:
+  inert.setHeading(270, degrees);
   driveForwardPD(34, 70);
   tongue_piston.set(true);
   wait(100, msec);
@@ -202,21 +269,18 @@ void autonomous(void) {
   turnLeftToHeadingTurn(80);
   IntakeFrontGroup.spin(forward, 100, pct);
   driveForwardPD(28, 30);
-  turnRightToHeading(210);
-  driveReverseStraight(9, 35);
-  scoring_piston.set(false);
-  Outtake.spin(reverse, 70, pct);
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-    case 6:
-      break;
-    case 7:
-      break;
+  turnRightToHeading(45);
+  driveForwardStraight(5, 15);
+  Outtake.spin(forward, 70, pct);
+  IntakeFrontGroup.spin(reverse, 40, pct);
+    break;
+  case 5:
+    break;
+  case 6:
+    break;
+  case 7:
+  driveForwardPD(1, 25);
+    break;
  }
 
 }
@@ -242,16 +306,15 @@ void usercontrol(void) {
       Outtake.spin(reverse, 100, pct);
       scoring_piston.set(true); //Extend scoring piston to score top goal
     } else if (Controller1.ButtonL2.pressing()) { //Outtake all gems from bot
-      IntakeFrontGroup.spin(reverse, 100, pct);
+      Outtake.spin(forward, 1.5, volt);
       Outtake.spin(forward, 100, pct);
       scoring_piston.set(true); //Extend scoring piston to outtake from top goal
     } else if (Controller1.ButtonR1.pressing()) { //Storage (Intake gems to top but hold there)
+      Outtake.spin(reverse, 1.5, volt);
       IntakeFrontGroup.spin(forward, 100, pct);
-      scoring_piston.set(false); //Retract scoring piston to store gems
     } else if (Controller1.ButtonR2.pressing()) { //Outtake all gems from bot
       IntakeFrontGroup.spin(reverse, 100, pct);
       Outtake.spin(forward, 100, pct);
-      scoring_piston.set(false); //Retract scoring piston to store gems
     } else {
       IntakeFrontGroup.stop(brake);
       Outtake.stop(brake);
@@ -273,7 +336,7 @@ void singlebutton() { //Toggle pistons with button presses
       tongue_piston.set(tongue_bool);
     }
 
-    if(Controller1.ButtonUp.pressing()) {
+    if(Controller1.ButtonA.pressing()) {
       waitUntil(!Controller1.ButtonUp.pressing());
       high_descore_bool = !high_descore_bool;
       descore.set(high_descore_bool);
@@ -295,14 +358,14 @@ int main() {
 
 /*
   BUTTON OVERVIEW FOR DRIVERS:
-  UP: SINGLE BUTTON HIGH DESCORE
+  UP: UNUSED
   DOWN: SINGLE BUTTON TONGUE
   LEFT: SINGLE BUTTON MIDDLE DESCORE
   RIGHT: UNUSED
   X: SCORE MIDDLE GOAL
   B: OUTTAKE ALL GEMS FROM BOT
   Y: UNUSED
-  A: UNUSED
+  A: WINGS
   L1: SCORE TOP GOAL
   L2: OUTTAKE ALL GEMS FROM BOT
   R1: STORAGE (INTAKE GEMS TO TOP BUT HOLD THERE)
