@@ -66,7 +66,7 @@ void driveForwardProportional(double distance) {   //inches
 
 void driveReverseProportional(double distance) {   //inches
     //Drive Forward Proportional
-    double kp = .05;
+    double kp = .2;
     double min_speed = .25;
     LeftMotorGroup.resetPosition();
   
@@ -113,7 +113,7 @@ void driveReverseStraight(double distance, double speed) {    //inches
 
     while(LeftMotorGroup.position(degrees) > -targetDistance) {
         double error = targetRotation - inert.rotation(degrees);
-        double kp = 1;
+        double kp = .2;
 
         double leftSpeed = speed - (error * kp);
         double rightSpeed = speed + (error * kp);
@@ -125,8 +125,10 @@ void driveReverseStraight(double distance, double speed) {    //inches
     RightMotorGroup.stop(brake);
 }
 
+
+
 void turnRightToHeading(double targetHeading){
-    double kp = .3;
+    double kp = .35;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -142,10 +144,10 @@ void turnRightToHeading(double targetHeading){
     }
     LeftMotorGroup.stop(brake);
     RightMotorGroup.stop(brake);   
-}
+}   
 
 void turnLeftToHeading(double targetHeading){
-    double kp = .3;
+    double kp = .35;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -165,8 +167,8 @@ void turnLeftToHeading(double targetHeading){
 
 void driveForwardPD(double distance, double max_speed) {   //inches
     //Drive Forward Proportional
-    double kp = .5;
-    double kd = 0;
+    double kp = .2;
+    double kd = 2;
     double min_speed = .25;
     double speed = max_speed;
 
@@ -190,8 +192,8 @@ void driveForwardPD(double distance, double max_speed) {   //inches
         RightMotorGroup.spin(fwd, speed, pct);
         wait(10, msec);
     }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);
+    LeftMotorGroup.stop(coast);
+    RightMotorGroup.stop(coast);
 }
 
 void driveForwardStraightPD(double distance, double max_speed) {   //inches
