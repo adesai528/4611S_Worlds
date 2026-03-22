@@ -7,8 +7,10 @@ using namespace vex;
 
 // define used instances of motors and sensors as extern here because they are defined in robotconfig files
 // Motor Groups
-extern motor_group LeftMotors;
-extern motor_group RightMotors;
+extern motor_group LeftMotorGroup;
+extern motor_group RightMotorGroup;
+extern motor LeftRear;
+extern motor RightRear;
 
 //Sensors
 extern inertial inert;
@@ -32,7 +34,7 @@ void updateOdometry(){
         float theta = heading * M_PI / 180.0;
 
         // Get encoder position
-        float currentEncoder = (LeftMotors.position(degrees) + RightMotors.position(degrees)) /2;
+        float currentEncoder = (LeftRear.position(degrees) + RightRear.position(degrees)) /2;
         float deltaTicks = currentEncoder - lastEncoder;
         lastEncoder = currentEncoder;
 
@@ -112,24 +114,24 @@ void driveToPoint(float targetX, float targetY) {
     float leftSpeed = BASE_SPEED + turnAdjustment;
     float rightSpeed = BASE_SPEED - turnAdjustment;
 
-    LeftMotors.spin(fwd, leftSpeed, pct);
-    RightMotors.spin(fwd, rightSpeed, pct);
+    LeftMotorGroup.spin(fwd, leftSpeed, pct);
+    RightMotorGroup.spin(fwd, rightSpeed, pct);
 
     wait(20, msec);
   }
 
-  LeftMotors.stop();
-  RightMotors.stop();
+  LeftMotorGroup.stop();
+  RightMotorGroup.stop();
 }
 
 void driveToPointPID(float targetX, float targetY) {  //TODO: pos tol for motion chaining
-    float kP_TURN = 0.5;
+    float kP_TURN = 0.1;
     float kI_TURN = 0.0;
-    float kD_TURN = 0.2;
+    float kD_TURN = 0.1;
     
-    float kP_DRIVE = 2.0;   // Stronger because distance is bigger numbers (inches)
-    float kI_DRIVE = 0.0;   // Usually small or 0
-    float kD_DRIVE = 0.2;   // Helps slow down as you approach
+    float kP_DRIVE = 4;   // Stronger because distance is bigger numbers (inches)
+    float kI_DRIVE = 0.03;   // Usually small or 0
+    float kD_DRIVE = 0.6;   // Helps slow down as you approach
     
     float MAX_DRIVE_SPEED = 60; // Cap driving speed (percent)
     float MIN_DRIVE_SPEED = 10; // Don't go too slow  
@@ -184,14 +186,14 @@ void driveToPointPID(float targetX, float targetY) {  //TODO: pos tol for motion
       float leftSpeed = driveSpeed + turnAdjustment;
       float rightSpeed = driveSpeed - turnAdjustment;
   
-      LeftMotors.spin(fwd, leftSpeed, pct);
-      RightMotors.spin(fwd, rightSpeed, pct);
+      LeftMotorGroup.spin(fwd, leftSpeed, pct);
+      RightMotorGroup.spin(fwd, rightSpeed, pct);
   
       wait(20, msec);
     }
   
-    LeftMotors.stop();
-    RightMotors.stop();
+    LeftMotorGroup.stop();
+    RightMotorGroup.stop();
   }
 
   void initializeOdometry(float x, float y) {

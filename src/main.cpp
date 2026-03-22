@@ -10,14 +10,12 @@ competition Competition;
 brain Brain;
 controller Controller1 = controller(primary);
 //X,Y are useless, B = tongue, x and b for mid score, left and right mid descore
-
-//Bools
+//Bools and integers
 bool high_descore_bool = false;
 bool middle_descore_bool = false;
 bool tongue_bool = false;
-int current_auton_selection = 0;
 bool auto_started = false;
-
+int current_auton_selection = 0;
 //Pneumatics Pistons
 digital_out tongue_piston = digital_out(Brain.ThreeWirePort.H); //Tongue
 digital_out descore = digital_out(Brain.ThreeWirePort.F); //High Descore
@@ -25,7 +23,7 @@ digital_out scoring_piston = digital_out(Brain.ThreeWirePort.A); //Scoring
 digital_out middle_descore = digital_out(Brain.ThreeWirePort.D); //Middle Descore
 
 //Sensors
-inertial inert = inertial(PORT5);
+
 distance distanceFront  = distance(PORT10);
 distance distanceBack = distance(PORT2);
 distance distanceLeft = distance(PORT4);
@@ -34,12 +32,12 @@ distance distanceDown = distance(PORT20);
 
 
 //Individual Motors
-motor RightFront = motor(PORT18, ratio6_1, false); //done
-motor RightMiddle = motor(PORT19, ratio6_1, true); //done
-motor RightRear = motor(PORT21, ratio6_1, false); //done
-motor LeftFront = motor(PORT13, ratio6_1, true); //done
-motor LeftMiddle = motor(PORT12, ratio6_1, false); //done
-motor LeftRear = motor(PORT11, ratio6_1, true); //done
+extern motor RightFront;
+extern motor RightMiddle;
+extern motor RightRear;
+extern motor LeftFront;
+extern motor LeftMiddle;
+extern motor LeftRear;
 // motor RightFront = motor(PORT18, ratio6_1, true); //done
 // motor RightMiddle = motor(PORT19, ratio6_1, true); //done
 // motor RightRear = motor(PORT21, ratio6_1, false); //done
@@ -49,16 +47,15 @@ motor LeftRear = motor(PORT11, ratio6_1, true); //done
 
 
 //Intake Motors
-motor FrontIntakeRight = motor(PORT17, ratio6_1, true); //done
-motor FrontIntakeLeft = motor(PORT14, true); //done
-motor Outtake = motor(PORT9, false); //done
-
+extern motor FrontIntakeRight;
+extern motor FrontIntakeLeft;
+extern motor Outtake;
 //Motor Groups
-motor_group LeftMotorGroup = motor_group(LeftFront, LeftMiddle, LeftRear);
-motor_group RightMotorGroup = motor_group(RightFront, RightMiddle, RightRear);
-motor_group IntakeFrontGroup = motor_group(FrontIntakeRight, FrontIntakeLeft);
-motor_group AllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear);
-motor_group TrulyAllMotorGroup = motor_group(LeftFront, RightFront, LeftMiddle, RightMiddle, LeftRear, RightRear, FrontIntakeRight, FrontIntakeLeft, Outtake);
+extern motor_group LeftMotorGroup;
+extern motor_group RightMotorGroup;
+extern motor_group IntakeFrontGroup;
+extern motor_group AllMotorGroup;
+extern motor_group TrulyAllMotorGroup;
 
 
 void pre_auton(void) {
@@ -101,7 +98,7 @@ void pre_auton(void) {
         break;
     }
     if(Brain.Screen.pressing()){
-      while(Brain.Screen.pressing()) {}
+      while(Brain.Screen.pressing() or Controller1.ButtonRight.pressing()) {}
       current_auton_selection ++;
     } else if (current_auton_selection == 9){
       current_auton_selection = 0;
@@ -297,32 +294,33 @@ void autonomous(void) {
     IntakeFrontGroup.spin(reverse, 40, pct);
     break;
   case 5: //Left7LPush
-    inert.setHeading(270, degrees);
-    driveForwardPD(9, 25);
-    turnRightToHeading(0);
-    IntakeFrontGroup.spin(forward, 100, pct);
-    Outtake.spin(forward, 100, pct);
-    driveForwardPD(30, 25);
-    turnLeftToHeading(210);
-    driveForwardStraight(35, 25);
-    turnLeftToHeading(180);
-    AllMotorGroup.spin(forward, 35, pct);
-    tongue_piston.set(true);
-    wait(300, msec);
-    AllMotorGroup.spin(forward, 20, pct);
-    wait(500, msec);
-    driveReverseStraight(28, 70);
-    scoring_piston.set(true);
-    Outtake.spin(reverse, 100, pct);
-    wait(1500, msec);
-    turnLeftToHeadingTurn(80);
-    driveForwardPD(4, 30);
-    turnLeftToHeading(0);
-    descore.set(true);
-    wait(500, msec);
-    descore.set(false);
-    driveForwardPD(20, 30);
-    turnRightToHeading(20);
+    initializeOdometry(0, 0, 270);
+    driveToPointPID(39, 0);
+    break;
+    turnRightToHeading(270);
+    // IntakeFrontGroup.spin(forward, 100, pct);
+    // Outtake.spin(forward, 100, pct);
+    // driveForwardPD(30, 25);
+    // turnLeftToHeading(210);
+    // driveForwardStraight(35, 25);
+    // turnLeftToHeading(180);
+    // AllMotorGroup.spin(forward, 35, pct);
+    // tongue_piston.set(true);
+    // wait(300, msec);
+    // AllMotorGroup.spin(forward, 20, pct);
+    // wait(500, msec);
+    // driveReverseStraight(28, 70);
+    // scoring_piston.set(true);
+    // Outtake.spin(reverse, 100, pct);
+    // wait(1500, msec);
+    // turnLeftToHeadingTurn(80);
+    // driveForwardPD(4, 30);
+    // turnLeftToHeading(0);
+    // descore.set(true);
+    // wait(500, msec);
+    // descore.set(false);
+    // driveForwardPD(20, 30);
+    // turnRightToHeading(20);
     break;
   case 6: //Right7LPush
     inert.setHeading(90, degrees);
@@ -427,7 +425,7 @@ void usercontrol(void) {
       Outtake.spin(forward, 100, pct);
       scoring_piston.set(true); //Extend scoring piston to outtake from top goal
     } else if (Controller1.ButtonR1.pressing()) { //Storage (Intake gems to top but hold there)
-      Outtake.spin(reverse, 1.5, volt);
+      Outtake.spin(forward, 1.5, volt);
       IntakeFrontGroup.spin(forward, 100, pct);
     } else if (Controller1.ButtonR2.pressing()) { //Outtake all gems from bot
       IntakeFrontGroup.spin(reverse, 100, pct);
@@ -454,7 +452,7 @@ void singlebutton() { //Toggle pistons with button presses
     }
 
     if(Controller1.ButtonA.pressing()) {
-      waitUntil(!Controller1.ButtonUp.pressing());
+      waitUntil(!Controller1.ButtonA.pressing());
       high_descore_bool = !high_descore_bool;
       descore.set(high_descore_bool);
     }
@@ -465,6 +463,9 @@ void singlebutton() { //Toggle pistons with button presses
 
 int main() {
   thread a(singlebutton);
+  thread b(updateOdometry);
+  thread c(controllerDisplay);
+  inert.calibrate();
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();
