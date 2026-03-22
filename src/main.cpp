@@ -5,58 +5,70 @@
 #include "proportionalmotion.h"
 #include "odometry.h"
 using namespace vex;
-competition Competition;
 
+//Competition Global Instances
+competition Competition;
 brain Brain;
 controller Controller1 = controller(primary);
-//X,Y are useless, B = tongue, x and b for mid score, left and right mid descore
+
 //Bools and integers
 bool high_descore_bool = false;
 bool middle_descore_bool = false;
 bool tongue_bool = false;
 bool auto_started = false;
 int current_auton_selection = 0;
-//Pneumatics Pistons
+
+//Pneumatics Pistons (Define in robotconfig.cpp later) - use extern and remove the definition in main.cpp
 digital_out tongue_piston = digital_out(Brain.ThreeWirePort.H); //Tongue
 digital_out descore = digital_out(Brain.ThreeWirePort.F); //High Descore
 digital_out scoring_piston = digital_out(Brain.ThreeWirePort.A); //Scoring
 digital_out middle_descore = digital_out(Brain.ThreeWirePort.D); //Middle Descore
-
-//Sensors
-
 distance distanceFront  = distance(PORT10);
 distance distanceBack = distance(PORT2);
 distance distanceLeft = distance(PORT4);
 distance distanceRight = distance(PORT6);
 distance distanceDown = distance(PORT20);
 
-
-//Individual Motors
+//External Devices
+extern inertial inert;
 extern motor RightFront;
 extern motor RightMiddle;
 extern motor RightRear;
 extern motor LeftFront;
 extern motor LeftMiddle;
 extern motor LeftRear;
-// motor RightFront = motor(PORT18, ratio6_1, true); //done
-// motor RightMiddle = motor(PORT19, ratio6_1, true); //done
-// motor RightRear = motor(PORT21, ratio6_1, false); //done
-// motor LeftFront = motor(PORT11, ratio6_1, false); //done
-// motor LeftMiddle = motor(PORT12, ratio6_1, false); //done
-// motor LeftRear = motor(PORT13, ratio6_1, true); //done
-
-
-//Intake Motors
 extern motor FrontIntakeRight;
 extern motor FrontIntakeLeft;
 extern motor Outtake;
-//Motor Groups
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 extern motor_group IntakeFrontGroup;
 extern motor_group AllMotorGroup;
 extern motor_group TrulyAllMotorGroup;
 
+void singlebutton() { //Toggle pistons with button presses
+  while(true) {
+    if(Controller1.ButtonLeft.pressing()) {
+      waitUntil(!Controller1.ButtonLeft.pressing());
+      middle_descore_bool = !middle_descore_bool;
+      middle_descore.set(middle_descore_bool);
+    }
+
+    if(Controller1.ButtonDown.pressing()) {
+      waitUntil(!Controller1.ButtonDown.pressing());
+      tongue_bool = !tongue_bool;
+      tongue_piston.set(tongue_bool);
+    }
+
+    if(Controller1.ButtonA.pressing()) {
+      waitUntil(!Controller1.ButtonA.pressing());
+      high_descore_bool = !high_descore_bool;
+      descore.set(high_descore_bool);
+    }
+
+    task::sleep(20);
+  }
+}
 
 void pre_auton(void) {
   tongue_piston.set(false);
@@ -107,43 +119,6 @@ void pre_auton(void) {
   }
 }
 
-void turnLeftToHeadingTurn(double targetHeading){
-    double kp = .5;
-    targetHeading = wrapAngle(targetHeading);
-
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = counterclockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
-
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = counterclockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(reverse, speed, pct);
-        RightMotorGroup.spin(forward, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
-}
-
-void turnRightToHeadingTurn(double targetHeading){
-    double kp = .5;
-    targetHeading = wrapAngle(targetHeading);
-
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = counterclockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
-
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = counterclockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(forward, speed, pct);
-        RightMotorGroup.spin(reverse, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
-}
 void autonomous(void) {
   auto_started = true;
   switch(current_auton_selection){ 
@@ -166,7 +141,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeadingTurn(80);
+    turnLeftToHeading(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(210);
@@ -203,7 +178,7 @@ void autonomous(void) {
     Outtake.spin(reverse, 70, pct);
     wait(2000, msec);
     driveForwardPD(40, 25);
-    turnLeftToHeadingTurn(180);
+    turnLeftToHeading(180);
     AllMotorGroup.spin(forward, 25, pct);
     IntakeFrontGroup.spin(forward, 100, pct);
     Outtake.spin(forward, 100, pct);
@@ -231,7 +206,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeadingTurn(80);
+    turnLeftToHeading(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(210);
@@ -257,7 +232,7 @@ void autonomous(void) {
     IntakeFrontGroup.spin(reverse, 50, pct);
     wait(2000, msec);
     driveReverseStraight(40, 25);
-    turnLeftToHeadingTurn(180);
+    turnLeftToHeading(180);
     AllMotorGroup.spin(forward, 25, pct);
     IntakeFrontGroup.spin(forward, 100, pct);
     Outtake.spin(forward, 100, pct);
@@ -285,7 +260,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeadingTurn(80);
+    turnLeftToHeading(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(45);
@@ -293,7 +268,7 @@ void autonomous(void) {
     Outtake.spin(forward, 70, pct);
     IntakeFrontGroup.spin(reverse, 40, pct);
     break;
-  case 5: //Left7LPush
+  case 5: //Left7LPush - Arjun worked on this one, but it is untested and may not be fully functional. Use with caution.
     initializeOdometry(0, 0, 270);
     driveToPointPID(39, 0);
     break;
@@ -341,7 +316,7 @@ void autonomous(void) {
     scoring_piston.set(true);
     Outtake.spin(reverse, 100, pct);
     wait(1500, msec);
-    turnRightToHeadingTurn(80);
+    turnRightToHeading(80);
     driveForwardPD(4, 30);
     turnRightToHeading(0);
     descore.set(true);
@@ -369,7 +344,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnRightToHeadingTurn(80);
+    turnRightToHeading(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnLeftToHeading(30);
@@ -437,30 +412,6 @@ void usercontrol(void) {
   }
 }
 
-void singlebutton() { //Toggle pistons with button presses
-  while(true) {
-    if(Controller1.ButtonLeft.pressing()) {
-      waitUntil(!Controller1.ButtonLeft.pressing());
-      middle_descore_bool = !middle_descore_bool;
-      middle_descore.set(middle_descore_bool);
-    }
-
-    if(Controller1.ButtonDown.pressing()) {
-      waitUntil(!Controller1.ButtonDown.pressing());
-      tongue_bool = !tongue_bool;
-      tongue_piston.set(tongue_bool);
-    }
-
-    if(Controller1.ButtonA.pressing()) {
-      waitUntil(!Controller1.ButtonA.pressing());
-      high_descore_bool = !high_descore_bool;
-      descore.set(high_descore_bool);
-    }
-
-    task::sleep(20);
-  }
-}
-
 int main() {
   thread a(singlebutton);
   thread b(updateOdometry);
@@ -474,8 +425,8 @@ int main() {
   }
 }
 
-/*
-  BUTTON OVERVIEW FOR DRIVERS:
+/* BUTTON OVERVIEW FOR DRIVERS:
+  
   UP: UNUSED
   DOWN: SINGLE BUTTON TONGUE
   LEFT: SINGLE BUTTON MIDDLE DESCORE
@@ -490,5 +441,19 @@ int main() {
   R2: OUTTAKE ALL GEMS FROM BOT
   CONTROLLER JOYSTICK 3: FORWARD AND BACKWARD
   CONTROLLER JOYSTICK 1: LEFT AND RIGHT
+
+*/
+
+/* STRATEGY FOR STRATEGISTS: 
+  
+  SOLO AUTON LEFT: Start left, go matchloader, score long goal, collect 3 gems middle, score middle, go right matchloader, score long goal.
+  LEFTML: Start left, collect 3 gems middle, score middle, go matchloader, score long goal.
+  LEFTLM: Start left, go matchloader, score long goal, collect 3 gems middle, score middle.
+  RIGHTBL: Start right, collect 3 gems middle, score bottom.
+  RIGHTLB: Start right, go matchloader, score long goal, collect 3 gems middle, score bottom.
+  LEFT7LPUSH: (Start ML or LM), but use wings to descore against opponents.
+  RIGHT7LPUSH: (Start BL or LB, but use wings to descore against opponents.
+  SOLO RIGHT AWP: Start right, go matchloader, score long goal, collect 3 gems middle, score bottom, go left matchloader, score long goal.
+  ONE INCH: Drive forward for an inch (for testing purposes only)
 
 */

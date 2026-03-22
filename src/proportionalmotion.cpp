@@ -2,13 +2,11 @@
 #include "robotconfig.h"
 #include "common.h"
 using namespace vex;
-
-// define used instances of motors and sensors as extern here because they are defined in robotconfig files
-// Motor Groups
+//EXTERN Motor Groups
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 
-//Sensors
+//EXTERN Sensors
 extern inertial inert;
 extern brain Brain;
 
@@ -42,6 +40,44 @@ void turnLeftProportional(double target) {
     }
     LeftMotorGroup.stop(brake);
     RightMotorGroup.stop(brake);
+}
+
+void turnLeftToHeadingTurn(double targetHeading){
+    double kp = .5;
+    targetHeading = wrapAngle(targetHeading);
+
+    double currentHeading = wrapAngle(inert.heading(degrees));
+    double error = counterclockwiseDistance(currentHeading, targetHeading);
+    double speed = error * kp;
+
+    while(fabs(error) > 2.0){
+        currentHeading = wrapAngle(inert.heading(degrees));
+        error = counterclockwiseDistance(currentHeading, targetHeading);
+        speed = error * kp;
+        LeftMotorGroup.spin(reverse, speed, pct);
+        RightMotorGroup.spin(forward, speed, pct);
+    }
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);   
+}
+
+void turnRightToHeadingTurn(double targetHeading){
+    double kp = .5;
+    targetHeading = wrapAngle(targetHeading);
+
+    double currentHeading = wrapAngle(inert.heading(degrees));
+    double error = counterclockwiseDistance(currentHeading, targetHeading);
+    double speed = error * kp;
+
+    while(fabs(error) > 2.0){
+        currentHeading = wrapAngle(inert.heading(degrees));
+        error = counterclockwiseDistance(currentHeading, targetHeading);
+        speed = error * kp;
+        LeftMotorGroup.spin(forward, speed, pct);
+        RightMotorGroup.spin(reverse, speed, pct);
+    }
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);   
 }
 
 void driveForwardProportional(double distance) {   //inches
@@ -124,8 +160,6 @@ void driveReverseStraight(double distance, double speed) {    //inches
     LeftMotorGroup.stop(brake);
     RightMotorGroup.stop(brake);
 }
-
-
 
 void turnRightToHeading(double targetHeading){
     double kp = .35;

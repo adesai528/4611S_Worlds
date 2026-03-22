@@ -1,17 +1,14 @@
 #include "vex.h"
 #include "robotconfig.h"
 using namespace vex;
-
-// define used instances of motors and sensors as extern here because they are defined in robotconfig files
-// Motor Groups
+//EXTERN Motor Groups
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 
-//Sensors
+//EXTERN Sensors
 extern inertial inert;
 
-//Drive Forward Simple
-void driveForwardSimple(double distance, double speed) {   
+void driveForwardSimple(double distance, double speed) { //Drive Forward Simple
    LeftMotorGroup.resetPosition();
    while(LeftMotorGroup.position(degrees)<distance){
         LeftMotorGroup.spin(fwd, speed, pct);
@@ -21,8 +18,7 @@ void driveForwardSimple(double distance, double speed) {
     RightMotorGroup.stop(brake);
 }
 
-//Drive Reverse Simple
-void driveReverseSimple(double distance, double speed) {   
+void driveReverseSimple(double distance, double speed) { //Drive Reverse Simple 
     LeftMotorGroup.resetPosition();
     while(LeftMotorGroup.position(degrees) > -distance){
          LeftMotorGroup.spin(reverse, speed, pct);
@@ -32,8 +28,7 @@ void driveReverseSimple(double distance, double speed) {
      RightMotorGroup.stop(brake);
  }
  
-//Simple Turn Right
-void turnRightSimple(double target, double speed) {   
+void turnRightSimple(double target, double speed) { //Simple Turn Right
     inert.resetRotation();
     wait(.25, sec); //Sometimes Inertial/Gyro Sensors need some time to settle
     while(inert.rotation(degrees) < target) {
@@ -44,8 +39,7 @@ void turnRightSimple(double target, double speed) {
     RightMotorGroup.stop(brake);
 }
 
-//Simple Turn Left
-void turnLeftSimple(double target, double speed) {   
+void turnLeftSimple(double target, double speed) { //Simple Turn Left
     inert.resetRotation();
     wait(.25, sec); //Sometimes Inertial or Gyro Sensors need some time to settle
     while(inert.rotation(degrees) > -target) {
