@@ -29,7 +29,7 @@ distance distanceLeft = distance(PORT4);
 distance distanceRight = distance(PORT6);
 distance distanceDown = distance(PORT20);
 
-//External Devices
+//EXTERN Devices
 extern inertial inert;
 extern motor RightFront;
 extern motor RightMiddle;

@@ -1,18 +1,18 @@
 #include "vex.h"
 #include "robotconfig.h"
 #include "odometry.h"
-
 using namespace vex;
-
-// define used instances of motors and sensors as extern here because they are defined in robotconfig files
-// Motor Groups
+//EXTERN Motor Groups
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 
-//Sensors
+//EXTERN Sensors
 extern inertial inert;
 extern brain Brain;
 extern controller controller1;
+
+// Define constants 
+const double WHEEL_DIAMETER = 2.5; 
 
 void intialize(){
     inert.calibrate();
@@ -24,21 +24,15 @@ void intialize(){
     controller1.rumble(".-.-");
 }
 
-// Define constants 
-const double WHEEL_DIAMETER = 2.5; 
-
-//Convert Inches to Motor Encoder Degrees
-double inchesToDegrees(double inches) { 
+double inchesToDegrees(double inches) { //Convert Inches to Motor Encoder Degrees
     return (inches / (M_PI * WHEEL_DIAMETER)) * 360.0; 
 } 
 
-// Function to wrap an angle within [0, 360]
-double wrapAngle(double angle) {
+double wrapAngle(double angle) { // Function to wrap an angle within [0, 360]
     return fmod(angle + 360, 360);
 }
 
-// Function to compute clockwise distance from current to target angle
-double clockwiseDistance(double currentAngle, double targetAngle) {
+double clockwiseDistance(double currentAngle, double targetAngle) { // Function to compute clockwise distance from current to target angle
     double distance = targetAngle - currentAngle;
     if (distance < 0) {
         distance += 360.0; // Wrap around if negative
@@ -46,8 +40,7 @@ double clockwiseDistance(double currentAngle, double targetAngle) {
     return distance;
 }
 
-// Function to compute counterclockwise distance from current to target angle
-double counterclockwiseDistance(double currentAngle, double targetAngle) {
+double counterclockwiseDistance(double currentAngle, double targetAngle) { // Function to compute counterclockwise distance from current to target angle
     double distance = currentAngle - targetAngle;
     if (distance < 0) {
         distance += 360.0; // Wrap around if negative
@@ -55,8 +48,7 @@ double counterclockwiseDistance(double currentAngle, double targetAngle) {
     return distance;
 }
 
-//Debugging functions are used to display sensor values to the screen
-void brainDisplay(){
+void brainDisplay(){ //Debugging functions are used to display sensor values to the screen
     while(true){
         Brain.Screen.clearScreen();
         Brain.Screen.printAt(1,30,"LeftM %f",LeftMotorGroup.position(degrees));
@@ -69,8 +61,7 @@ void brainDisplay(){
     }
 }
 
-//Debugging functions are used to display sensor values to the screen
-int controllerDisplay(){
+int controllerDisplay(){ //Debugging functions are used to display sensor values to the screen
     controller1.Screen.clearScreen();
     while(true){
         controller1.Screen.setCursor(1,1);
@@ -85,8 +76,7 @@ int controllerDisplay(){
     return 0;
 }
 
-// Normalize angle to [-180, 180)
-float wrapAngle180(float angle) {
+float wrapAngle180(float angle) { // Normalize angle to [-180, 180)
     while (angle >= 180.0) angle -= 360.0;
     while (angle < -180.0) angle += 360.0;
     return angle;

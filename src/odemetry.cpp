@@ -4,15 +4,11 @@
 #include "simplemotion.h"
 #include "proportionalmotion.h"
 using namespace vex;
-
-// define used instances of motors and sensors as extern here because they are defined in robotconfig files
-// Motor Groups
+//EXTERN Motor Groups
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
-extern motor LeftRear;
-extern motor RightRear;
 
-//Sensors
+//EXTERN Sensors
 extern inertial inert;
 extern brain Brain;
 
@@ -34,7 +30,7 @@ void updateOdometry(){
         float theta = heading * M_PI / 180.0;
 
         // Get encoder position
-        float currentEncoder = (LeftRear.position(degrees) + RightRear.position(degrees)) /2;
+        float currentEncoder = (LeftMotorGroup.position(degrees) + RightMotorGroup.position(degrees)) /2;
         float deltaTicks = currentEncoder - lastEncoder;
         lastEncoder = currentEncoder;
 
