@@ -141,7 +141,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeading(80);
+    turnLeftToHeadingTurn(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(210);
@@ -178,7 +178,7 @@ void autonomous(void) {
     Outtake.spin(reverse, 70, pct);
     wait(2000, msec);
     driveForwardPD(40, 25);
-    turnLeftToHeading(180);
+    turnLeftToHeadingTurn(180);
     AllMotorGroup.spin(forward, 25, pct);
     IntakeFrontGroup.spin(forward, 100, pct);
     Outtake.spin(forward, 100, pct);
@@ -206,7 +206,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeading(80);
+    turnLeftToHeadingTurn(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(210);
@@ -232,7 +232,7 @@ void autonomous(void) {
     IntakeFrontGroup.spin(reverse, 50, pct);
     wait(2000, msec);
     driveReverseStraight(40, 25);
-    turnLeftToHeading(180);
+    turnLeftToHeadingTurn(180);
     AllMotorGroup.spin(forward, 25, pct);
     IntakeFrontGroup.spin(forward, 100, pct);
     Outtake.spin(forward, 100, pct);
@@ -260,7 +260,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnLeftToHeading(80);
+    turnLeftToHeadingTurn(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnRightToHeading(45);
@@ -316,7 +316,7 @@ void autonomous(void) {
     scoring_piston.set(true);
     Outtake.spin(reverse, 100, pct);
     wait(1500, msec);
-    turnRightToHeading(80);
+    turnRightToHeadingTurn(80);
     driveForwardPD(4, 30);
     turnRightToHeading(0);
     descore.set(true);
@@ -344,7 +344,7 @@ void autonomous(void) {
     wait(800, msec);
     tongue_piston.set(false);
     Outtake.stop(brake);
-    turnRightToHeading(80);
+    turnRightToHeadingTurn(80);
     IntakeFrontGroup.spin(forward, 100, pct);
     driveForwardPD(28, 30);
     turnLeftToHeading(30);
