@@ -46,7 +46,7 @@ extern motor_group IntakeFrontGroup;
 extern motor_group AllMotorGroup;
 extern motor_group TrulyAllMotorGroup;
 
-void singlebutton() { //Toggle pistons with button presses
+void toggle() {
   while(true) {
     if(Controller1.ButtonLeft.pressing()) {
       waitUntil(!Controller1.ButtonLeft.pressing());
@@ -413,7 +413,7 @@ void usercontrol(void) {
 }
 
 int main() {
-  thread a(singlebutton);
+  thread a(toggle);
   thread b(updateOdometry);
   thread c(controllerDisplay);
   inert.calibrate();
