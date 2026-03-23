@@ -22,8 +22,7 @@ float lastEncoder = 0.0;
 const float WHEEL_DIAMETER = 2.75; // in inches
 const float TICKS_PER_REV = 360.0;
 
-//Run as a thread
-void updateOdometry(){
+void updateOdometry(){ //Run as a thread
     while(true) {
         // Get current heading in radians
         heading = inert.heading();
@@ -53,15 +52,13 @@ float getYposition(){
     return YPosition;
 }
 
-// Returns the straight-line distance to the target point
-float getDistanceToTarget(float targetX, float targetY) {
+float getDistanceToTarget(float targetX, float targetY) { // Returns the straight-line distance to the target point
     float deltaX = targetX - getXposition();
     float deltaY = targetY - getYposition();
     return sqrt(deltaX * deltaX + deltaY * deltaY);
   }
   
-// Returns the heading you need to face the target point (0–360°)
-float getHeadingToTarget(float targetX, float targetY) {
+float getHeadingToTarget(float targetX, float targetY) { // Returns the heading you need to face the target point (0–360°)
     float deltaX = targetX - getXposition();
     float deltaY = targetY - getYposition();
   

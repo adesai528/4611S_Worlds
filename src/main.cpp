@@ -275,7 +275,7 @@ void autonomous(void) {
     Outtake.spin(forward, 70, pct);
     IntakeFrontGroup.spin(reverse, 40, pct);
     break;
-  case 5: //Left7LPush - Arjun worked on this one, but it is untested and may not be fully functional. Use with caution.
+  case 5: //Left7LPush
     inert.setHeading(270, degrees);
     IntakeFrontGroup.spin(forward, 100, pct);
     Outtake.spin(forward, 100, pct);
@@ -377,8 +377,8 @@ void autonomous(void) {
     scoring_piston.set(true);
     Outtake.spin(reverse, 100, pct); 
     break;
-  case 8:
-    driveForwardPD(1, 25);
+  case 8: //Testing Auton
+    driveToPointPID(39, 0);
     break;
  }
 

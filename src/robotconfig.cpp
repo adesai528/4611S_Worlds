@@ -10,7 +10,7 @@ motor LeftMiddle = motor(PORT12, ratio6_1, false);
 motor LeftRear = motor(PORT11, ratio6_1, true);
 inertial inert = inertial(PORT5);
 
-//DEFINEDIn/Outtake
+//DEFINED In/Outtake
 motor FrontIntakeRight = motor(PORT17, ratio6_1, true);
 motor FrontIntakeLeft = motor(PORT14, true);
 motor Outtake = motor(PORT9, false);
