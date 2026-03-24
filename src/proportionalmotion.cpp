@@ -162,7 +162,7 @@ void driveReverseStraight(double distance, double speed) {    //inches
 }
 
 void turnRightToHeading(double targetHeading){
-    double kp = .34;
+    double kp = .33;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -181,7 +181,7 @@ void turnRightToHeading(double targetHeading){
 }   
 
 void turnLeftToHeading(double targetHeading){
-    double kp = .34;
+    double kp = .33;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));

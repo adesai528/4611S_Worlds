@@ -11,6 +11,15 @@ extern motor_group RightMotorGroup;
 //EXTERN Sensors
 extern inertial inert;
 extern brain Brain;
+extern digital_out tongue_piston;
+extern digital_out descore;
+extern digital_out scoring_piston;
+extern digital_out middle_descore;
+extern distance distanceFront;
+extern  distance distanceBack;
+extern  distance distanceLeft;
+extern  distance distanceRight;
+extern  distance distanceDown;
 
 //Globals
 double XPosition = 0.0;
@@ -81,113 +90,79 @@ void driveDirectToPoint(float targetX, float targetY){
     driveForwardStraightPD(dist, 50);
 }
 
-void driveToPoint(float targetX, float targetY) {
-  float KP_TURN = .50; // Proportional gain for turning
-  float BASE_SPEED = 50; // Base driving speed
-  float POSITION_TOLERANCE = 1.0; // Inches
+
+
+// void driveToPointPID(float targetX, float targetY) {  //TODO: pos tol for motion chaining
+//     float kP_TURN = 0.5;
+//     float kI_TURN = 0.0;
+//     float kD_TURN = 0.4;
     
-  while (true) {
-    float currentX = getXposition();  // Your odometry function
-    float currentY = getYposition();
-    float currentHeading = inert.heading();  // In degrees, 0-360
-
-    float dx = targetX - currentX;
-    float dy = targetY - currentY;
-    float distance = sqrt(dx * dx + dy * dy);
-
-    if (distance < POSITION_TOLERANCE){
-        wait(150, msec);
-      break; // Target reached
-    }
-
-    float angleToTarget = atan2(dy, dx) * 180.0 / M_PI; // Convert to degrees
-    float angleError = wrapAngle180(angleToTarget - currentHeading);
-
-    float turnAdjustment = angleError * KP_TURN;
-    float leftSpeed = BASE_SPEED + turnAdjustment;
-    float rightSpeed = BASE_SPEED - turnAdjustment;
-
-    LeftMotorGroup.spin(fwd, leftSpeed, pct);
-    RightMotorGroup.spin(fwd, rightSpeed, pct);
-
-    wait(20, msec);
-  }
-
-  LeftMotorGroup.stop();
-  RightMotorGroup.stop();
-}
-
-void driveToPointPID(float targetX, float targetY) {  //TODO: pos tol for motion chaining
-    float kP_TURN = 0.1;
-    float kI_TURN = 0.0;
-    float kD_TURN = 0.1;
+//     float kP_DRIVE = 4;   // Stronger because distance is bigger numbers (inches)
+//     float kI_DRIVE = 0.03;   // Usually small or 0
+//     float kD_DRIVE = 0.6;   // Helps slow down as you approach
     
-    float kP_DRIVE = 4;   // Stronger because distance is bigger numbers (inches)
-    float kI_DRIVE = 0.03;   // Usually small or 0
-    float kD_DRIVE = 0.6;   // Helps slow down as you approach
-    
-    float MAX_DRIVE_SPEED = 60; // Cap driving speed (percent)
-    float MIN_DRIVE_SPEED = 10; // Don't go too slow  
-    float POSITION_TOLERANCE = 1.0; // Inches
+//     float MAX_DRIVE_SPEED = 100; // Cap driving speed (percent)
+//     float MIN_DRIVE_SPEED = 0.25; // Don't go too slow  
+//     float POSITION_TOLERANCE = 1.0; // Inches
 
-    float angleErrorSum = 0.0;
-    float prevAngleError = 0.0;
-    float distanceErrorSum = 0.0;
-    float prevDistance = 0.0;
+//     float angleErrorSum = 0.0;
+//     float prevAngleError = 0.0;
+//     float distanceErrorSum = 0.0;
+//     float prevDistance = 0.0;
   
-    while (true) {
-      float currentX = getXposition();
-      float currentY = getYposition();
-      float currentHeading = inert.heading();  // 0 to 360 degrees
+//     while (true) {
+//       float currentX = getXposition();
+//       float currentY = getYposition();
+//       float currentHeading = inert.heading();  // 0 to 360 degrees
   
-      float dx = targetX - currentX;
-      float dy = targetY - currentY;
-      float distance = sqrt(dx * dx + dy * dy);
+//       float dx = targetX - currentX;
+//       float dy = targetY - currentY;
+//       float distance = sqrt(dx * dx + dy * dy);
   
-      if (distance < POSITION_TOLERANCE) {
-        wait(150, msec); //settling
-        break;
-      }
+//       if (distance < POSITION_TOLERANCE) {
+//         wait(150, msec); //settling
+//         break;
+//       }
   
-      // Angle PID
-      float angleToTarget = atan2(dy, dx) * 180.0 / M_PI;
-      float angleError = wrapAngle180(angleToTarget - currentHeading);
+//       // Angle PID
+//       float angleToTarget = atan2(dy, dx) * 180.0 / M_PI;
+//       float angleError = wrapAngle180(angleToTarget - currentHeading);
   
-      angleErrorSum += angleError;
-      float angleErrorRate = angleError - prevAngleError;
-      prevAngleError = angleError;
+//       angleErrorSum += angleError;
+//       float angleErrorRate = angleError - prevAngleError;
+//       prevAngleError = angleError;
   
-      float turnAdjustment =
-        (kP_TURN * angleError) +
-        (kI_TURN * angleErrorSum) +
-        (kD_TURN * angleErrorRate);
+//       float turnAdjustment =
+//         (kP_TURN * angleError) +
+//         (kI_TURN * angleErrorSum) +
+//         (kD_TURN * angleErrorRate);
   
-      // Distance PID
-      distanceErrorSum += distance;
-      float distanceErrorRate = distance - prevDistance;
-      prevDistance = distance;
+//       // Distance PID
+//       distanceErrorSum += distance;
+//       float distanceErrorRate = distance - prevDistance;
+//       prevDistance = distance;
   
-      float driveSpeed =
-        (kP_DRIVE * distance) +
-        (kI_DRIVE * distanceErrorSum) +
-        (kD_DRIVE * distanceErrorRate);
+//       float driveSpeed =
+//         (kP_DRIVE * distance) +
+//         (kI_DRIVE * distanceErrorSum) +
+//         (kD_DRIVE * distanceErrorRate);
   
-      // Clip drive speed
-      if (driveSpeed > MAX_DRIVE_SPEED) driveSpeed = MAX_DRIVE_SPEED;
-      if (driveSpeed < MIN_DRIVE_SPEED) driveSpeed = MIN_DRIVE_SPEED;
+//       // Clip drive speed
+//       if (driveSpeed > MAX_DRIVE_SPEED) driveSpeed = MAX_DRIVE_SPEED;
+//       if (driveSpeed < MIN_DRIVE_SPEED) driveSpeed = MIN_DRIVE_SPEED;
   
-      float leftSpeed = driveSpeed + turnAdjustment;
-      float rightSpeed = driveSpeed - turnAdjustment;
+//       float leftSpeed = driveSpeed + turnAdjustment;
+//       float rightSpeed = driveSpeed - turnAdjustment;
   
-      LeftMotorGroup.spin(fwd, leftSpeed, pct);
-      RightMotorGroup.spin(fwd, rightSpeed, pct);
+//       LeftMotorGroup.spin(fwd, leftSpeed, pct);
+//       RightMotorGroup.spin(fwd, rightSpeed, pct);
   
-      wait(20, msec);
-    }
+//       wait(20, msec);
+//     }
   
-    LeftMotorGroup.stop();
-    RightMotorGroup.stop();
-  }
+//     LeftMotorGroup.stop();
+//     RightMotorGroup.stop();
+//   }
 
   void initializeOdometry(float x, float y) {
     XPosition = x;
