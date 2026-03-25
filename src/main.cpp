@@ -5,11 +5,7 @@
 #include "proportionalmotion.h"
 #include "odometry.h"
 using namespace vex;
-
-//Competition Global Instances
 competition Competition;
-extern brain Brain;
-controller Controller1 = controller(primary);
 
 //Bools and integers
 bool high_descore_bool = false;
@@ -18,19 +14,8 @@ bool tongue_bool = false;
 bool auto_started = false;
 int current_auton_selection = 0;
 
-//Pneumatics Pistons (Define in robotconfig.cpp later) - use extern and remove the definition in main.cpp
-extern digital_out tongue_piston;
-extern digital_out descore;
-extern digital_out scoring_piston;
-extern digital_out middle_descore;
-extern distance distanceFront;
-extern  distance distanceBack;
-extern  distance distanceLeft;
-extern  distance distanceRight;
-extern  distance distanceDown;
-
 //EXTERN Devices
-extern inertial inert;
+extern brain Brain;
 extern motor RightFront;
 extern motor RightMiddle;
 extern motor RightRear;
@@ -40,6 +25,17 @@ extern motor LeftRear;
 extern motor FrontIntakeRight;
 extern motor FrontIntakeLeft;
 extern motor Outtake;
+extern inertial inert;
+extern distance distanceFront;
+extern distance distanceBack;
+extern distance distanceLeft;
+extern distance distanceRight;
+extern distance distanceDown;
+extern controller Controller1;
+extern digital_out tongue_piston;
+extern digital_out descore;
+extern digital_out scoring_piston;
+extern digital_out middle_descore;
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 extern motor_group IntakeFrontGroup;
@@ -66,7 +62,7 @@ void toggle() {
       descore.set(high_descore_bool);
     }
 
-    task::sleep(20);
+  task::sleep(20);
   }
 }
 
@@ -110,106 +106,13 @@ void pre_auton(void) {
         break;
     }
     if(Brain.Screen.pressing()){
-      while(Brain.Screen.pressing() or Controller1.ButtonUp.pressing()) {}
+      while(Brain.Screen.pressing() or Controller1.ButtonUp.pressing())
       current_auton_selection ++;
     } else if (current_auton_selection == 9){
       current_auton_selection = 0;
     }
     task::sleep(10);
   }
-}
-void driveToPointPID(double targetx, double targety, double maxVolt =10, double desiredHeading = 0, double POSITION_TOLERANCE = 4, bool useTongue = false){
-  double cX = getXposition();
-  double cY = getYposition();
-
-  double dX = targetx - cX;
-  double dY = -1 * targety - cY; //sync with jerry io coords
-
-  double distanceError = hypot(dX, dY);
-  double distancePreviousError = distanceError;
-  double startingError = distanceError;
-
-  double targetHeading = 57.2958 * atan2(dY, dX) + desiredHeading;
-
-  double currentHeading = inert.heading();
-  double headingError = wrapAngle180(targetHeading-currentHeading);
-  double previousHeadingError = headingError;
-
-  double dP;
-  double dD;
-
-  double tP;
-  double tD;
-
-  double leftPower;
-  double rightPower;
-
-  double timeout = 0; //exit condition
-  double pointDrivekP = 2;
-  double pointDrivekD = 0.03;
-  double pointTurnkP = 0.34;
-  double pointTurnkD = 0.01;
-
-
-  while (timeout <= (1000 + startingError * 50)) {
-    cX = getXposition();
-    cY = getYposition();
-
-    dX = targetx - cX;
-    dY = -1 * targety - cY;
-
-    targetHeading = 57.2958*atan2(dY, dX) + desiredHeading; //from radians to degrees
-    currentHeading = inert.heading();
-
-    distanceError = hypot(dX, dY); 
-    headingError =  wrapAngle180(targetHeading - currentHeading);
-
-    dP = distanceError * pointDrivekP;
-    dD = (distanceError - distancePreviousError) * pointDrivekD;
-
-    tP = headingError * pointTurnkP;
-    tD = (headingError - previousHeadingError) * pointTurnkD;
-
-    if (distanceError <= POSITION_TOLERANCE){
-      break;
-    }
-    if (distanceError <= 18 && useTongue){ //tongue blocks
-      tongue_piston.set(true);
-    }
-
-    distancePreviousError = distanceError;
-    previousHeadingError = headingError;
-
-    if (fabs(desiredHeading - 180) < 0.001){
-      leftPower = dP + dD + (tP + tD);
-      rightPower = dP + dD - (tP + tD);
-    } else{
-      leftPower = dP + dD - (tP + tD);
-      rightPower = dP + dD + (tP + tD);
-    }
-    
-    leftPower = leftPower * 0.12;
-    rightPower = rightPower * 0.12;
-
-    if (leftPower > maxVolt){ leftPower = maxVolt;}
-    if (leftPower < -maxVolt){ leftPower = -maxVolt;}
-    
-    if (rightPower > maxVolt){ rightPower = maxVolt;}
-    if (rightPower < -maxVolt){ rightPower = -maxVolt;}
-
-    if (desiredHeading == 180){
-      leftPower = -leftPower;
-      rightPower = -rightPower;
-    }
-
-    LeftMotorGroup.spin(forward, leftPower, volt);
-    RightMotorGroup.spin(forward, rightPower, volt);
-
-    timeout += 20;
-    wait(20, msec);
-  }
-  LeftMotorGroup.stop();
-  RightMotorGroup.stop();
 }
 
 void autonomous(void) {
