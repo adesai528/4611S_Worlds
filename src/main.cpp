@@ -502,11 +502,11 @@ void usercontrol(void) {
   while (1) {
     LeftMotorGroup.spin(forward, (Controller1.Axis3.position() + ((Controller1.Axis1.position() * 0.75)))*0.12, volt);
     RightMotorGroup.spin(forward, (Controller1.Axis3.position() - ((Controller1.Axis1.position() * 0.75)))*0.12, volt);
-    if (Controller1.ButtonX.pressing()) { //Score middle goal
+    if (Controller1.ButtonB.pressing()) { //Score middle goal
       IntakeFrontGroup.spin(forward, 100, pct);
       Outtake.spin(reverse, 100, pct);
       scoring_piston.set(false); //Retract scoring piston to score middle goal
-    } else if (Controller1.ButtonB.pressing()) { //Outtake all gems from bot
+    } else if (Controller1.ButtonX.pressing()) { //Outtake all gems from bot
       IntakeFrontGroup.spin(reverse, 100, pct);
       Outtake.spin(forward, 100, pct);
       scoring_piston.set(true); //Extend scoring piston to outtake from middle goal
@@ -521,6 +521,7 @@ void usercontrol(void) {
     } else if (Controller1.ButtonR1.pressing()) { //Storage (Intake gems to top but hold there)
       Outtake.spin(forward, 1.5, volt);
       IntakeFrontGroup.spin(forward, 100, pct);
+      scoring_piston.set(true); //Extend scoring piston to outtake from middle goal
     } else if (Controller1.ButtonR2.pressing()) { //Outtake all gems from bot
       IntakeFrontGroup.spin(reverse, 100, pct);
       Outtake.spin(forward, 100, pct);
