@@ -71,10 +71,10 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
   double rightPower;
 
   double timeout = 0; //exit condition
-  double pointDrivekP = 2;
+  double pointDrivekP = 3;
   double pointDrivekD = 0.03;
-  double pointTurnkP = 0.34;
-  double pointTurnkD = 0.01;
+  double pointTurnkP = 0.5;
+  double pointTurnkD = 0.1;
 
 
   while (timeout <= (1000 + startingError * 50)) {
@@ -134,8 +134,8 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
     timeout += 20;
     wait(20, msec);
   }
-  LeftMotorGroup.stop();
-  RightMotorGroup.stop();
+  LeftMotorGroup.stop(hold);
+  RightMotorGroup.stop(hold);
 }
 
 void turnLeftToHeadingTurn(double targetHeading){
@@ -258,7 +258,7 @@ void driveReverseStraight(double distance, double speed) {    //inches
 }
 
 void turnRightToHeading(double targetHeading){
-    double kp = .33;
+    double kp = .42;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -277,7 +277,7 @@ void turnRightToHeading(double targetHeading){
 }   
 
 void turnLeftToHeading(double targetHeading){
-    double kp = .33;
+    double kp = .42;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
