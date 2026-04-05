@@ -14,7 +14,7 @@ inertial inert = inertial(PORT5);
 //DEFINED In/Outtake
 motor FrontIntakeRight = motor(PORT17, ratio6_1, true);
 motor FrontIntakeLeft = motor(PORT14, true);
-motor Outtake = motor(PORT9, false);
+motor Outtake = motor(PORT20, false);
 
 //DEFINED Motor Groups
 motor_group LeftMotorGroup = motor_group(LeftFront, LeftMiddle, LeftRear);
@@ -31,7 +31,7 @@ distance distanceFront  = distance(PORT10);
 distance distanceBack = distance(PORT2);
 distance distanceLeft = distance(PORT4);
 distance distanceRight = distance(PORT6);
-distance distanceDown = distance(PORT20);
+distance distanceDown = distance(PORT9);
 /*Ghost Bot Definitions
 
 motor RightFront = motor(PORT18, ratio6_1, true);
