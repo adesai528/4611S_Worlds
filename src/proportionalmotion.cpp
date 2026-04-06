@@ -43,7 +43,7 @@ void turnLeftProportional(double target) {
     RightMotorGroup.stop(brake);
 }
 
-void driveToPointPID(double targetx, double targety, double maxVolt, double desiredHeading, double POSITION_TOLERANCE, bool useTongue){
+void driveToPointPID(double targetx, double targety, double maxVolt, double desiredHeading, double POSITION_TOLERANCE, bool useTongue, bool isReverse = false){
   extern digital_out tongue_piston;
   double cX = getXposition();
   double cY = getYposition();
@@ -56,6 +56,9 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
   double startingError = distanceError;
 
   double targetHeading = 57.2958 * atan2(dY, dX) + desiredHeading;
+  if (isReverse) {
+    targetHeading = wrapAngle180(targetHeading + 180);
+  }
 
   double currentHeading = inert.heading();
   double headingError = wrapAngle180(targetHeading-currentHeading);
@@ -85,6 +88,10 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
     dY = -1 * targety - cY;
 
     targetHeading = 57.2958*atan2(dY, dX) + desiredHeading; //from radians to degrees
+    if (isReverse) {
+      targetHeading = wrapAngle180(targetHeading + 180);
+    }
+    
     currentHeading = inert.heading();
 
     distanceError = hypot(dX, dY); 
@@ -123,7 +130,7 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
     if (rightPower > maxVolt){ rightPower = maxVolt;}
     if (rightPower < -maxVolt){ rightPower = -maxVolt;}
 
-    if (desiredHeading == 180){
+    if (desiredHeading == 180 || isReverse){
       leftPower = -leftPower;
       rightPower = -rightPower;
     }
@@ -399,3 +406,42 @@ void turnRightToHeadingPD(double targetHeading){
     LeftMotorGroup.stop(brake);
     RightMotorGroup.stop(brake);   
 }
+
+void turnLeftToHeadingSlowerKP(double targetHeading){
+    double kp = .31;
+    targetHeading = wrapAngle(targetHeading);
+
+    double currentHeading = wrapAngle(inert.heading(degrees));
+    double error = counterclockwiseDistance(currentHeading, targetHeading);
+    double speed = error * kp;
+
+    while(fabs(error) > 2.0){
+        currentHeading = wrapAngle(inert.heading(degrees));
+        error = counterclockwiseDistance(currentHeading, targetHeading);
+        speed = error * kp;
+        LeftMotorGroup.spin(reverse, speed, pct);
+        RightMotorGroup.spin(forward, speed, pct);
+    }
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);   
+}
+
+void turnRightToHeadingSlowerKP(double targetHeading){
+    double kp = .38;
+    targetHeading = wrapAngle(targetHeading);
+
+    double currentHeading = wrapAngle(inert.heading(degrees));
+    double error = clockwiseDistance(currentHeading, targetHeading);
+    double speed = error * kp;
+
+    while(fabs(error) > 2.0){
+        currentHeading = wrapAngle(inert.heading(degrees));
+        error = clockwiseDistance(currentHeading, targetHeading);
+        speed = error * kp;
+        LeftMotorGroup.spin(forward, speed, pct);
+        RightMotorGroup.spin(reverse, speed, pct);
+    }
+    LeftMotorGroup.stop(brake);
+    RightMotorGroup.stop(brake);   
+}   
+

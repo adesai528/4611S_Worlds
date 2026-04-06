@@ -6,6 +6,7 @@
 #include "odometry.h"
 using namespace vex;
 competition Competition;
+controller Controller1 = controller(primary);
 
 //Bools and integers
 bool high_descore_bool = false;
@@ -31,7 +32,6 @@ extern distance distanceBack;
 extern distance distanceLeft;
 extern distance distanceRight;
 extern distance distanceDown;
-controller Controller1 = controller(primary);
 extern digital_out tongue_piston;
 extern digital_out descore;
 extern digital_out scoring_piston;
@@ -64,44 +64,6 @@ void toggle() {
 
   task::sleep(20);
   }
-}
-
-void turnRightToHeadingSlowerKP(double targetHeading){
-    double kp = .38;
-    targetHeading = wrapAngle(targetHeading);
-
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = clockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
-
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = clockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(forward, speed, pct);
-        RightMotorGroup.spin(reverse, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
-}   
-
-void turnLeftToHeadingSlowerKP(double targetHeading){
-    double kp = .31;
-    targetHeading = wrapAngle(targetHeading);
-
-    double currentHeading = wrapAngle(inert.heading(degrees));
-    double error = counterclockwiseDistance(currentHeading, targetHeading);
-    double speed = error * kp;
-
-    while(fabs(error) > 2.0){
-        currentHeading = wrapAngle(inert.heading(degrees));
-        error = counterclockwiseDistance(currentHeading, targetHeading);
-        speed = error * kp;
-        LeftMotorGroup.spin(reverse, speed, pct);
-        RightMotorGroup.spin(forward, speed, pct);
-    }
-    LeftMotorGroup.stop(brake);
-    RightMotorGroup.stop(brake);   
 }
 
 void pre_auton(void) {
@@ -232,7 +194,7 @@ void autonomous(void) {
   break;
     case 2: //LeftLM
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 34.325, 10, 0, 8, true);
+    driveToPointPID(-58, 35.325, 10, 0, 8, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 30, pct);
@@ -240,7 +202,7 @@ void autonomous(void) {
     AllMotorGroup.spin(forward, 20, pct);
     wait(650, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, 34.325, 10, 180, 18, true);
+    driveToPointPID(-19, 34.325, 10, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -252,7 +214,7 @@ void autonomous(void) {
     turnLeftToHeadingTurn(85);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-24, 7.25, 7, 0, 14, true);
+    driveToPointPID(-24, 7.25, 7, 0, 14, true, false);
     turnRightToHeading(225);
     AllMotorGroup.spin(reverse, 60, pct);
     wait(550, msec);
@@ -318,7 +280,7 @@ void autonomous(void) {
     break;
   case 5: //LeftLMPush
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 34.12, 10, 0, 2, true);
+    driveToPointPID(-58, 34.12, 10, 0, 2, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 31, pct);
@@ -328,7 +290,7 @@ void autonomous(void) {
     AllMotorGroup.stop(hold);
     wait(325, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, 34.2, 10, 180, 18, true);
+    driveToPointPID(-19, 34.2, 10, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -340,7 +302,7 @@ void autonomous(void) {
     turnLeftToHeadingTurn(85);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-22, 8.1, 8, 0, 14, true);
+    driveToPointPID(-22, 8.1, 8, 0, 14, true, false);
     wait(100, msec);
     turnRightToHeadingSlowerKP(225);
     wait(100, msec);
@@ -442,7 +404,7 @@ void autonomous(void) {
     break;
   case 0: //Testing Auton
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 34.85, 10, 0, 8, true);
+    driveToPointPID(-58, 34.85, 10, 0, 8, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 30, pct);
@@ -450,7 +412,7 @@ void autonomous(void) {
     AllMotorGroup.spin(forward, 15, pct);
     wait(650, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, 34.85, 12, 180, 18, true);
+    driveToPointPID(-19, 34.85, 12, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -462,7 +424,7 @@ void autonomous(void) {
     turnLeftToHeadingTurn(85);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-24, 7, 7, 0, 14, true);
+    driveToPointPID(-24, 7, 7, 0, 14, true, false);
     wait(100, msec);
     turnRightToHeading(225);
     AllMotorGroup.spin(reverse, 60, pct);
@@ -474,16 +436,16 @@ void autonomous(void) {
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-24, 24, 8, 0, 16, false);
+    driveToPointPID(-24, 24, 8, 0, 16, false, false);
     turnLeftToHeadingSlowerKP(90);
     wait(150, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-24, -44, 7, 0, 10, true);
+    driveToPointPID(-24, -44, 7, 0, 10, true, false);
     wait(100, msec);
     turnRightToHeading(135);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-80, -72, 10, 0, 20, true);
+    driveToPointPID(-80, -72, 10, 0, 20, true, false);
     turnRightToHeading(180);
     AllMotorGroup.spin(forward, 50, pct);
     wait(500, msec);
