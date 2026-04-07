@@ -10,6 +10,7 @@ motor LeftFront = motor(PORT13, ratio6_1, true);
 motor LeftMiddle = motor(PORT12, ratio6_1, false);
 motor LeftRear = motor(PORT11, ratio6_1, true);
 inertial inert = inertial(PORT5);
+rotation yaxo = rotation(PORT16, true);
 
 //DEFINED In/Outtake
 motor FrontIntakeRight = motor(PORT17, ratio6_1, true);

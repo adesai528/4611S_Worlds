@@ -13,4 +13,4 @@ extern inertial inert;
 extern motor_group LeftMotorGroup;
 extern motor_group RightMotorGroup;
 extern controller controller1;
-
+extern rotation yaxo;
