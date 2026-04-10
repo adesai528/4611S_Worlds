@@ -146,7 +146,7 @@ void driveToPointPID(double targetx, double targety, double maxVolt, double desi
 }
 
 void turnLeftToHeadingTurn(double targetHeading){
-    double kp = .5;
+    double kp = .495;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -165,7 +165,7 @@ void turnLeftToHeadingTurn(double targetHeading){
 }
 
 void turnRightToHeadingTurn(double targetHeading){
-    double kp = .5;
+    double kp = .495;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -265,7 +265,7 @@ void driveReverseStraight(double distance, double speed) {    //inches
 }
 
 void turnRightToHeading(double targetHeading){
-    double kp = .4275;
+    double kp = .4225;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -284,7 +284,7 @@ void turnRightToHeading(double targetHeading){
 }   
 
 void turnLeftToHeading(double targetHeading){
-    double kp = .4275;
+    double kp = .4225;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
