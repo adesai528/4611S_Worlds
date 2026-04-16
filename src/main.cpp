@@ -122,7 +122,7 @@ void autonomous(void) {
   scoring_piston.set(false);
   switch(current_auton_selection){ 
     case 8: //Solo Auton Left
-    inert.setHeading(270, degrees); //676767 ok some advice noah is a big stinky poo poo
+    inert.setHeading(270, degrees); //676767 ok some advice noah is a big st. minky poo poo
     initializeOdometry(-58, 6, 270);
     driveToPointPID(-58, 43.75, 12, 0, 8, true, false);
     wait(50, msec);
@@ -210,13 +210,15 @@ void autonomous(void) {
   break;
     case 2: //LeftLM
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 40.325, 10, 0, 7, true, false);
+    driveToPointPID(-58, 40.9673612, 7, 0, 7, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
-    AllMotorGroup.spin(forward, 30, pct);
-    wait(200, msec);
-    AllMotorGroup.spin(forward, 20, pct);
-    wait(650, msec);
+    AllMotorGroup.spin(forward, 15, pct);
+    wait(1.1, sec);
+    AllMotorGroup.stop();
+    // wait(250, msec);
+    // AllMotorGroup.spin(forward, 20, pct);
+    // wait(650, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees)); //i should probably make a function for this since i use it so much but idk if its worth it since its just one line and i dont use it in that many places but yeah
     driveToPointPID(-19, 34.325, 10, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
@@ -227,11 +229,12 @@ void autonomous(void) {
     Outtake.spin(reverse, 100, pct);
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
-    turnLeftToHeadingTurn(85);
+    turnLeftToHeadingSlowerKP(75);
+    wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
     driveToPointPID(-24, 7.25, 7, 0, 14, true, false);
-    turnRightToHeading(225);
+    turnRightToHeadingSlowerKP(225);
     AllMotorGroup.spin(reverse, 60, pct);
     wait(550, msec);
     AllMotorGroup.stop(brake);
@@ -503,8 +506,8 @@ void usercontrol(void) {
       IntakeFrontGroup.spin(reverse, 100, pct);
       Outtake.spin(forward, 100, pct);
     } else {
-      IntakeFrontGroup.stop(brake);
-      Outtake.stop(brake);
+      IntakeFrontGroup.stop(coast);
+      Outtake.stop(coast);
     }
   }
 }
