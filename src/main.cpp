@@ -119,7 +119,7 @@ void autonomous(void) {
   switch(current_auton_selection){ 
     case 0: //LEFTLM
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 40.5, 7, 0, 7, true, false);
+    driveToPointPID(-58, 41.36314159265, 7, 0, 7, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 20, pct);
@@ -158,14 +158,14 @@ void autonomous(void) {
     break;
   case 1: //RIGHTLB
     initializeOdometry(-58, -6, 90);
-    driveToPointPID(-58,-41.37314159265, 7, 0, 7, true, false);
+    driveToPointPID(-58,-41.36314159265, 7, 0, 7, true, false);
     turnRightToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
-    AllMotorGroup.spin(forward, 20, pct);
-    wait(1, sec);
+    AllMotorGroup.spin(forward, 12, pct);
+    wait(1.4, sec);
     AllMotorGroup.stop();
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, -34.325, 10, 180, 18, true, false);
+    driveToPointPID(-18, -34.325, 11, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -174,7 +174,7 @@ void autonomous(void) {
     Outtake.spin(reverse, 100, pct);
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
-    AllMotorGroup.spinFor(forward, 125, deg);
+    AllMotorGroup.spinFor(forward, 400, deg);
     turnRightToHeadingSlowerKP(290);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
@@ -185,7 +185,8 @@ void autonomous(void) {
     tongue_piston.set(false);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-3.25, -3.25, 5, 315, 14, false, false);
+    driveToPointPID(-3.5, -3.5, 5, 315, 14, false, false);
+    IntakeFrontGroup.spin(reverse, 50, pct);
     if (inert.heading(degrees) < 315) {
       turnRightToHeadingSlowerKP(315);
       wait(75, msec);
@@ -195,7 +196,8 @@ void autonomous(void) {
       wait(75, msec);
       turnLeftToHeadingSlowerKP(315);
     }
-    IntakeFrontGroup.spin(reverse, 50, pct);
+    wait(2, sec);
+    IntakeFrontGroup.stop(brake);
     break;
   case 2: //LEFTLMPush
     initializeOdometry(-58, 6, 270);
