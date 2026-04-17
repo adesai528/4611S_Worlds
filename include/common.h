@@ -6,5 +6,4 @@ double clockwiseDistance(double currentAngle, double targetAngle);
 double counterclockwiseDistance(double currentAngle, double targetAngle);
 void controllerDisplay();
 float wrapAngle180(float angle);
-
 #pragma once
