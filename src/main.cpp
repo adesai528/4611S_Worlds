@@ -14,7 +14,7 @@ bool middle_descore_bool = false;
 bool tongue_bool = false;
 bool auto_started = false;
 int current_auton_selection = 0;
-const char* autonNames[] = {"LEFTLM", "RIGHTLB", "LEFTLMPUSH", "RIGHTLBPUSH", "LEFT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)", "RIGHT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)"};
+const char* autonNames[] = {"LEFTLM + Push", "RIGHTLB + Push", "LEFTCLUSTERL + Push", "RIGHTCLUSTERL + Push", "LEFTLPUSH", "RIGHTLPUSH"};
 
 //EXTERN Devices
 extern brain Brain;
@@ -57,10 +57,17 @@ void toggle() {
       tongue_piston.set(tongue_bool);
     }
 
+    //  if(Controller1.ButtonA.pressing()) { //Controller A Button For High Descore Toggle
+    //   waitUntil(!Controller1.ButtonA.pressing());
+    //   high_descore_bool = !high_descore_bool;
+    //   descore.set(high_descore_bool);
+    // }
+    
     if(Controller1.ButtonA.pressing()) { //Controller A Button For High Descore Toggle
+      descore.set(false);
       waitUntil(!Controller1.ButtonA.pressing());
-      high_descore_bool = !high_descore_bool;
-      descore.set(high_descore_bool);
+      descore.set(true);
+      task::sleep(200); // Debounce delay
     }
   task::sleep(20);
   }
@@ -70,7 +77,7 @@ void pre_auton(void) {
   tongue_piston.set(false);
   scoring_piston.set(false);
   descore.set(false);
-  //inert.calibrate(); (Uncomment if initialize does not work)
+  inert.calibrate();
   while(!auto_started){
     Brain.Screen.clearScreen();
     Brain.Screen.printAt(5, 20, "THIS CODE BETTER LOCK IN OR I'M GONNA BE MAD");
@@ -91,16 +98,16 @@ void autonomous(void) {
   descore.set(true);
   scoring_piston.set(false);
   switch(current_auton_selection){ 
-    case 0: //LEFTLM
+    case 0: //LEFTLM + Push
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 41.36314159265, 7, 0, 7, true, false);
+    driveToPointPID(-58, 40.05814159265, 8, 0, 6, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 20, pct);
-    wait(1.2, sec);
+    wait(1025, msec);
     AllMotorGroup.stop();
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, 34.325, 10, 180, 18, true, false);
+    driveToPointPID(-15, 34.125, 11, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -109,12 +116,13 @@ void autonomous(void) {
     Outtake.spin(reverse, 100, pct);
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
-    AllMotorGroup.spinFor(forward, 125, deg);
-    turnLeftToHeadingSlowerKP(70);
+    AllMotorGroup.setVelocity(85, pct);
+    AllMotorGroup.spinFor(forward, 500, deg);
+    turnLeftToHeadingSlowerKP(60);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-24, 7.25, 7, 0, 14, true, false);
+    driveToPointPID(-24, 7.25, 8, 0, 14, true, false);
     turnRightToHeadingSlowerKP(225);
     wait(100, msec);
     AllMotorGroup.spin(reverse, 60, pct);
@@ -123,101 +131,33 @@ void autonomous(void) {
     scoring_piston.set(false);
     Outtake.spin(reverse, 100, pct);
     tongue_piston.set(false);
-    wait(2500, msec);
+    wait(800, msec);
     Outtake.spin(forward, 50, pct);
     driveForwardPD(10, 30);
     middle_descore.set(true);
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-3, 3, 10, 225, 18, true, false);
-    break;
-  case 1: //RIGHTLB
-    initializeOdometry(-58, -6, 90);
-    driveToPointPID(-58,-41.36314159265, 7, 0, 7, true, false);
-    turnRightToHeading(180);
-    IntakeFrontGroup.spin(forward, 100, pct);
-    AllMotorGroup.spin(forward, 12, pct);
-    wait(1.4, sec);
-    AllMotorGroup.stop();
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-18, -34.325, 11, 180, 18, true, false);
-    AllMotorGroup.spin(reverse, 40, pct);
-    scoring_piston.set(true);
-    tongue_piston.set(false);
-    wait(250, msec);
-    AllMotorGroup.stop(brake);
-    Outtake.spin(reverse, 100, pct);
-    wait(750, msec);
-    Outtake.spin(forward, 50, pct);
-    AllMotorGroup.spinFor(forward, 400, deg);
-    turnRightToHeadingSlowerKP(290);
-    wait(100, msec);
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    wait(75, msec);
-    driveToPointPID(-24, -3.25, 7, 0, 14, true, false);
-    turnRightToHeadingSlowerKP(315);
-    wait(100, msec);
-    tongue_piston.set(false);
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    wait(75, msec);
-    driveToPointPID(-3.5, -3.5, 5, 315, 14, false, false);
-    IntakeFrontGroup.spin(reverse, 50, pct);
-    if (inert.heading(degrees) < 315) {
-      turnRightToHeadingSlowerKP(315);
-      wait(75, msec);
-      turnRightToHeadingSlowerKP(315);
+    driveReverseStraight(8, 32);
+    if (inert.heading(degrees) < 225) {
+      turnRightToHeading(225);
     } else {
-      turnLeftToHeadingSlowerKP(315);
-      wait(75, msec);
-      turnLeftToHeadingSlowerKP(315);
+      turnLeftToHeading(225);
     }
-    wait(2, sec);
-    IntakeFrontGroup.stop(brake);
-    break;
-  case 2: //LEFTLMPush
-    initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 41.36314159265, 7, 0, 7, true, false);
-    turnLeftToHeading(180);
-    IntakeFrontGroup.spin(forward, 100, pct);
-    AllMotorGroup.spin(forward, 20, pct);
-    wait(1.2, sec);
-    AllMotorGroup.stop();
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-19, 34.325, 10, 180, 18, true, false);
-    AllMotorGroup.spin(reverse, 40, pct);
-    scoring_piston.set(true);
-    tongue_piston.set(false);
-    wait(250, msec);
-    AllMotorGroup.stop(brake);
-    Outtake.spin(reverse, 100, pct);
-    wait(750, msec);
-    Outtake.spin(forward, 50, pct);
-    AllMotorGroup.spinFor(forward, 125, deg);
-    turnLeftToHeadingSlowerKP(70);
-    wait(100, msec);
-    initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    wait(75, msec);
-    driveToPointPID(-24, 7.25, 7, 0, 14, true, false);
-    turnRightToHeadingSlowerKP(225);
-    wait(100, msec);
-    AllMotorGroup.spin(reverse, 60, pct);
-    wait(550, msec);
-    AllMotorGroup.stop(brake);
-    scoring_piston.set(false);
-    Outtake.spin(reverse, 100, pct);
-    tongue_piston.set(false);
-    wait(2500, msec);
-    Outtake.spin(forward, 50, pct);
-    //ROBOT JUST FINISHED SCORING MIDDLE GOAL! (OUTDATED CODE BELOW - USE ODOMETRY)
+    // initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
+    // driveToPointPID(-48, 20, 5, 225, 20, false, false);
+    // middle_descore.set(false);
+    // turnLeftToHeadingSlowerKP(180);
+    // descore.set(false);
+    // driveReverseStraight(25, 50);
+    middle_descore.set(false);
     driveForwardPD(25, 60);
-    turnLeftToHeadingSlowerKP(180);
+    turnLeftToHeadingSlowestKP(180);
     wait(100, msec);
     LeftMotorGroup.spin(reverse, 30, pct);
     RightMotorGroup.spin(forward, 30, pct);
-    wait(250, msec);
+    wait(225, msec);
     AllMotorGroup.stop(hold);
     descore.set(false);
     wait(500, msec);
-    AllMotorGroup.spin(reverse, 45, pct);
+    AllMotorGroup.spin(reverse, 40, pct);
     wait(650, msec);
     AllMotorGroup.stop(hold);
     turnRightToHeading(180);
@@ -225,51 +165,91 @@ void autonomous(void) {
     wait(775, msec);
     AllMotorGroup.stop(hold);
     break;
-  case 3: //RIGHTLBPUSH
+  case 1: //RIGHTLB + Push
     initializeOdometry(-58, -6, 90);
     driveToPointPID(-58,-41.36314159265, 7, 0, 7, true, false);
-    turnRightToHeading(180);
+    turnRightToHeadingSlowerKP(180);
     IntakeFrontGroup.spin(forward, 100, pct);
-    AllMotorGroup.spin(forward, 12, pct);
-    wait(1.4, sec);
+    AllMotorGroup.spin(forward, 25, pct);
+    wait(1000, msec);
     AllMotorGroup.stop();
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     driveToPointPID(-18, -34.325, 11, 180, 18, true, false);
-    AllMotorGroup.spin(reverse, 40, pct);
+    AllMotorGroup.spin(reverse, 75, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
-    wait(250, msec);
+    wait(200, msec);
     AllMotorGroup.stop(brake);
     Outtake.spin(reverse, 100, pct);
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
-    AllMotorGroup.spinFor(forward, 400, deg);
-    turnRightToHeadingSlowerKP(290);
+    AllMotorGroup.setVelocity(85, pct);
+    AllMotorGroup.spinFor(forward, 500, deg);
+    turnRightToHeadingSlowestKP(300);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
     driveToPointPID(-24, -3.25, 7, 0, 14, true, false);
-    turnRightToHeadingSlowerKP(315);
+    turnRightToHeadingSlowestKP(314);
     wait(100, msec);
     tongue_piston.set(false);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
     driveToPointPID(-3.5, -3.5, 5, 315, 14, false, false);
-    IntakeFrontGroup.spin(reverse, 50, pct);
+    middle_descore.set(true);
+    IntakeFrontGroup.spin(reverse, 45, pct);
     if (inert.heading(degrees) < 315) {
-      turnRightToHeadingSlowerKP(315);
+      turnRightToHeadingSlowestKP(315);
       wait(75, msec);
-      turnRightToHeadingSlowerKP(315);
+      turnRightToHeadingSlowestKP(315);
     } else {
-      turnLeftToHeadingSlowerKP(315);
+      turnLeftToHeadingSlowestKP(315);
       wait(75, msec);
-      turnLeftToHeadingSlowerKP(315);
+      turnLeftToHeadingSlowestKP(315);
     }
-    wait(1, sec);
-    IntakeFrontGroup.stop(brake);
+  wait(2, sec);
+  //IntakeFrontGroup.stop(brake);
     //INSERT PUSH CODE AFTER THIS! (ROBOT JUST FINISHED SCORING LOWER GOAL)
+  // middle_descore.set(false);
+  //   driveReverseSimple(30, 70);
+  //   wait(50, msec);
+  //   turnLeftToHeadingSlowestKP(180);
+  //   wait(100, msec);
+  //   LeftMotorGroup.spin(forward, 30, pct);
+  //   RightMotorGroup.spin(reverse, 30, pct);
+  //   wait(225, msec);
+  //   AllMotorGroup.stop(hold);
+  //   descore.set(false);
+  //   wait(500, msec);
+  //   AllMotorGroup.spin(reverse, 40, pct);
+  //   wait(650, msec);
+  //   AllMotorGroup.stop(hold);
+  //   turnLeftToHeading(180);
+  //   AllMotorGroup.spin(reverse, 12.5, pct);
+  //   wait(775, msec);
+    AllMotorGroup.stop(hold);   
     break;
-  case 4: //LEFT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)
+  case 2: //LEFTCLUSTERL + Push
+  initializeOdometry(-58, 6, 310);
+  driveToPointPID(-24, 24, 7, 310, 7, true, false);
+  turnLeftToHeadingSlowerKP(225);
+  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
+  driveToPointPID(-48, 48, 7, 225, 7, true, false);
+  turnLeftToHeadingSlowerKP(180);
+  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
+  driveToPointPID(-18, 34.325, 11, 180, 18, true, false);
+  break;
+  case 3: //RIGHTCLUSTERL + Push
+  initializeOdometry(-58, -6, 90);
+  driveToPointPID(-24, -24, 7, 0, 7, true, false);
+  turnRightToHeadingSlowerKP(110);
+  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
+  driveToPointPID(-48, -48, 7, 250, 14, true, false);
+  turnRightToHeadingSlowerKP(180);
+  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
+  driveToPointPID(-18, -34.325, 11, 180, 18, true, false);
+  break;
+  case 4: //LEFTLPUSH
     initializeOdometry(-58, 6, 270);
     driveToPointPID(-58, 41.36314159265, 7, 0, 7, true, false);
     turnLeftToHeading(180);
@@ -289,8 +269,8 @@ void autonomous(void) {
     Outtake.spin(forward, 50, pct);
     //INSERT PUSH CODE AFTER THIS! (ROBOT JUST FINISHED SCORING FOUR BLOCKS)
   break;
-  case 5: //RIGHT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)
-    initializeOdometry(-58, -6, 90);
+  case 5: //RIGHTLPUSH
+    initializeOdometry(-58, -6, 310);
     driveToPointPID(-58,-41.36314159265, 7, 0, 7, true, false);
     turnRightToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
@@ -308,7 +288,7 @@ void autonomous(void) {
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
     //INSERT PUSH CODE AFTER THIS! (ROBOT JUST FINISHED SCORING FOUR BLOCKS)
-    break;
+  break;
 }
 }
 

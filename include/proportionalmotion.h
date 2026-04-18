@@ -13,4 +13,6 @@ void driveForwardStraightPD(double distance, double speed);
 void driveToPointPID(double targetx, double targety, double maxVolt, double desiredHeading, double POSITION_TOLERANCE, bool useTongue, bool isReverse);
 void turnLeftToHeadingSlowerKP(double targetHeading);
 void turnRightToHeadingSlowerKP(double targetHeading);
+void turnLeftToHeadingSlowestKP(double targetHeading);
+void turnRightToHeadingSlowestKP(double targetHeading);
 #pragma once

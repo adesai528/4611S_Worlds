@@ -17,17 +17,9 @@ const double WHEEL_DIAMETER = 2.5;
 
 void initialize(){
     inert.calibrate();
-    while(inert.isCalibrating()) {
-        controller1.Screen.clearScreen();
-        controller1.Screen.setCursor(2,1);
-        controller1.Screen.print("Calibrating Inertial...");
-        task::sleep(10);
-    }
-
+    wait(3, sec);
     LeftMotorGroup.resetPosition();
     RightMotorGroup.resetPosition();
-
-    controller1.rumble("Inertial Calibrated");
 }
 
 double inchesToDegrees(double inches) { //Convert Inches to Motor Encoder Degrees
@@ -69,16 +61,13 @@ void brainDisplay(){ //Debugging functions are used to display sensor values to 
 
 void controllerDisplay(){ //Debugging functions are used to display sensor values to the screen
     controller1.Screen.clearScreen();
-    while(!inert.isCalibrating()){
+    while(true){
+        controller1.Screen.clearScreen();
         controller1.Screen.setCursor(1,1);
-        controller1.Screen.print("X Position %f",getXposition());
-        controller1.Screen.setCursor(2,1);
-        controller1.Screen.print("Y Position %f",getYposition());
-        controller1.Screen.setCursor(3,1);
         controller1.Screen.print("Heading %f",inert.heading(degrees));
-        controller1.Screen.setCursor(4,1);
+        controller1.Screen.setCursor(2,1);
         controller1.Screen.print("Auton: %s", autonNames[current_auton_selection]);
-        wait(10,msec);
+        task::sleep(250);
     }
 }
 
