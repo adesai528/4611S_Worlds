@@ -8,12 +8,13 @@ using namespace vex;
 competition Competition;
 controller Controller1 = controller(primary);
 
-//DEFINED Bools & Integers
+//DEFINED Variables
 bool high_descore_bool = false;
 bool middle_descore_bool = false;
 bool tongue_bool = false;
 bool auto_started = false;
 int current_auton_selection = 0;
+const char* autonNames[] = {"LEFTLM", "RIGHTLB", "LEFTLMPUSH", "RIGHTLBPUSH", "LEFT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)", "RIGHT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)"};
 
 //EXTERN Devices
 extern brain Brain;
@@ -75,31 +76,11 @@ void pre_auton(void) {
     Brain.Screen.printAt(5, 20, "THIS CODE BETTER LOCK IN OR I'M GONNA BE MAD");
     Brain.Screen.printAt(5, 40, "Battery Percentage:" "%d", Brain.Battery.capacity());
     Brain.Screen.printAt(5, 120, "Selected Auton:");
-    switch(current_auton_selection){
-      case 0:
-        Brain.Screen.printAt(5, 140, "LEFTLM");
-        break;
-      case 1:
-        Brain.Screen.printAt(5, 140, "RIGHTLB");
-        break;
-      case 2:
-        Brain.Screen.printAt(5, 140, "LEFTLMPUSH");
-        break;
-      case 3:
-        Brain.Screen.printAt(5, 140, "RIGHTLBPUSH");
-        break;
-      case 4:
-        Brain.Screen.printAt(5, 140, "LEFT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)");
-        break;
-      case 5:
-        Brain.Screen.printAt(5, 140, "RIGHT4TOWER+PUSH (TOWER, LONG, WINGS, 4 BLOCKS)");
-        break;
-    }
-    if(Brain.Screen.pressing()){
-      while(Brain.Screen.pressing() or Controller1.ButtonY.pressing()) {}
+    Brain.Screen.printAt(5, 140, autonNames[current_auton_selection]);
+    if(Brain.Screen.pressing() || Controller1.ButtonY.pressing()){
+      while(Brain.Screen.pressing() || Controller1.ButtonY.pressing()) {}
       current_auton_selection ++;
-    } else if (current_auton_selection == 6){
-      current_auton_selection = 0;
+      if(current_auton_selection == 6) current_auton_selection = 0;
     }
     task::sleep(10);
   }

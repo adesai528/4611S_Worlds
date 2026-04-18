@@ -1,5 +1,6 @@
 #include "vex.h"
 #include "robotconfig.h"
+#include "common.h"
 #include "odometry.h"
 using namespace vex;
 //EXTERN Motor Groups
@@ -61,7 +62,7 @@ void brainDisplay(){ //Debugging functions are used to display sensor values to 
     }
 }
 
-int controllerDisplay(){ //Debugging functions are used to display sensor values to the screen
+void controllerDisplay(){ //Debugging functions are used to display sensor values to the screen
     controller1.Screen.clearScreen();
     while(true){
         controller1.Screen.setCursor(1,1);
@@ -70,10 +71,10 @@ int controllerDisplay(){ //Debugging functions are used to display sensor values
         controller1.Screen.print("Y Position %f",getYposition());
         controller1.Screen.setCursor(3,1);
         controller1.Screen.print("Heading %f",inert.heading(degrees));
+        controller1.Screen.setCursor(4,1);
+        controller1.Screen.print("Auton: %s", autonNames[current_auton_selection]);
         wait(10,msec);
-        
     }
-    return 0;
 }
 
 float wrapAngle180(float angle) { // Normalize angle to [-180, 180)
