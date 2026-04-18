@@ -70,7 +70,7 @@ void pre_auton(void) {
   tongue_piston.set(false);
   scoring_piston.set(false);
   descore.set(false);
-  inert.calibrate();
+  //inert.calibrate(); (Uncomment if initialize does not work)
   while(!auto_started){
     Brain.Screen.clearScreen();
     Brain.Screen.printAt(5, 20, "THIS CODE BETTER LOCK IN OR I'M GONNA BE MAD");
@@ -356,7 +356,7 @@ int main() {
   thread a(toggle);
   thread b(updateOdometry);
   thread c(controllerDisplay);
-  inert.calibrate();
+  thread d(initialize);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();

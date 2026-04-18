@@ -1,4 +1,4 @@
-void intialize();
+void initialize();
 double inchesToDegrees(double inches);
 void brainDisplay();
 double wrapAngle(double angle);

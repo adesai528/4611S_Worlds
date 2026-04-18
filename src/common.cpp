@@ -15,14 +15,19 @@ extern controller controller1;
 // Define constants 
 const double WHEEL_DIAMETER = 2.5; 
 
-void intialize(){
+void initialize(){
     inert.calibrate();
-    wait(3,sec);
+    while(inert.isCalibrating()) {
+        controller1.Screen.clearScreen();
+        controller1.Screen.setCursor(2,1);
+        controller1.Screen.print("Calibrating Inertial...");
+        task::sleep(10);
+    }
 
     LeftMotorGroup.resetPosition();
     RightMotorGroup.resetPosition();
 
-    controller1.rumble(".-.-");
+    controller1.rumble("Inertial Calibrated");
 }
 
 double inchesToDegrees(double inches) { //Convert Inches to Motor Encoder Degrees
@@ -58,13 +63,13 @@ void brainDisplay(){ //Debugging functions are used to display sensor values to 
         Brain.Screen.printAt(1,90,"Heading %f",inert.heading(degrees));
         Brain.Screen.printAt(1,110,"X %f",getXposition());
         Brain.Screen.printAt(1,130,"Y %f",getYposition());
-        wait(.25,sec);
+        task::sleep(250);
     }
 }
 
 void controllerDisplay(){ //Debugging functions are used to display sensor values to the screen
     controller1.Screen.clearScreen();
-    while(true){
+    while(!inert.isCalibrating()){
         controller1.Screen.setCursor(1,1);
         controller1.Screen.print("X Position %f",getXposition());
         controller1.Screen.setCursor(2,1);
