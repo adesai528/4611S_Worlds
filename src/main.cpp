@@ -14,7 +14,7 @@ bool middle_descore_bool = false;
 bool tongue_bool = false;
 bool auto_started = false;
 int current_auton_selection = 0;
-const char* autonNames[] = {"LEFTLM + Push", "RIGHTLB + Push", "LEFTCLUSTERL + Push", "RIGHTCLUSTERL + Push", "LEFTLPUSH", "RIGHTLPUSH"};
+const char* autonNames[] = {"LEFTLM + Push", "RIGHTLB + Push", "Skills 20", "RIGHTCLUSTERL + Push", "LEFTLPUSH", "RIGHTLPUSH"};
 
 //EXTERN Devices
 extern brain Brain;
@@ -100,14 +100,14 @@ void autonomous(void) {
   switch(current_auton_selection){ 
     case 0: //LEFTLM + Push
     initializeOdometry(-58, 6, 270);
-    driveToPointPID(-58, 40.05814159265, 8, 0, 6, true, false);
+    driveToPointPID(-58, 41.36314159265, 7, 0, 7, true, false);
     turnLeftToHeading(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 20, pct);
     wait(1025, msec);
     AllMotorGroup.stop();
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-    driveToPointPID(-15, 34.125, 11, 180, 18, true, false);
+    driveToPointPID(-15, 34.125, 10, 180, 18, true, false);
     AllMotorGroup.spin(reverse, 40, pct);
     scoring_piston.set(true);
     tongue_piston.set(false);
@@ -116,14 +116,14 @@ void autonomous(void) {
     Outtake.spin(reverse, 100, pct);
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
-    AllMotorGroup.setVelocity(85, pct);
+    AllMotorGroup.setVelocity(65, pct);
     AllMotorGroup.spinFor(forward, 500, deg);
-    turnLeftToHeadingSlowerKP(60);
+    turnLeftToHeadingSlowestKP(70);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
-    driveToPointPID(-24, 7.25, 8, 0, 14, true, false);
-    turnRightToHeadingSlowerKP(225);
+    driveToPointPID(-24, 7.25, 7, 0, 14, true, false);
+    turnRightToHeadingSlowestKP(225);
     wait(100, msec);
     AllMotorGroup.spin(reverse, 60, pct);
     wait(550, msec);
@@ -137,9 +137,9 @@ void autonomous(void) {
     middle_descore.set(true);
     driveReverseStraight(8, 32);
     if (inert.heading(degrees) < 225) {
-      turnRightToHeading(225);
+      turnRightToHeadingSlowestKP(225);
     } else {
-      turnLeftToHeading(225);
+      turnLeftToHeadingSlowestKP(225);
     }
     // initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     // driveToPointPID(-48, 20, 5, 225, 20, false, false);
@@ -153,10 +153,10 @@ void autonomous(void) {
     wait(100, msec);
     LeftMotorGroup.spin(reverse, 30, pct);
     RightMotorGroup.spin(forward, 30, pct);
-    wait(225, msec);
+    wait(125, msec);
     AllMotorGroup.stop(hold);
     descore.set(false);
-    wait(500, msec);
+    wait(450, msec);
     AllMotorGroup.spin(reverse, 40, pct);
     wait(650, msec);
     AllMotorGroup.stop(hold);
@@ -168,7 +168,7 @@ void autonomous(void) {
   case 1: //RIGHTLB + Push
     initializeOdometry(-58, -6, 90);
     driveToPointPID(-58,-41.36314159265, 7, 0, 7, true, false);
-    turnRightToHeadingSlowerKP(180);
+    turnRightToHeadingSlowestKP(180);
     IntakeFrontGroup.spin(forward, 100, pct);
     AllMotorGroup.spin(forward, 25, pct);
     wait(1000, msec);
@@ -184,13 +184,13 @@ void autonomous(void) {
     wait(750, msec);
     Outtake.spin(forward, 50, pct);
     AllMotorGroup.setVelocity(85, pct);
-    AllMotorGroup.spinFor(forward, 500, deg);
-    turnRightToHeadingSlowestKP(300);
+    AllMotorGroup.spinFor(forward, 400, deg);
+    turnRightToHeadingSlowestKP(290);
     wait(100, msec);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
     wait(75, msec);
     driveToPointPID(-24, -3.25, 7, 0, 14, true, false);
-    turnRightToHeadingSlowestKP(314);
+    turnRightToHeadingSlowestKP(315);
     wait(100, msec);
     tongue_piston.set(false);
     initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
@@ -227,17 +227,22 @@ void autonomous(void) {
   //   turnLeftToHeading(180);
   //   AllMotorGroup.spin(reverse, 12.5, pct);
   //   wait(775, msec);
-    AllMotorGroup.stop(hold);   
-    break;
-  case 2: //LEFTCLUSTERL + Push
-  initializeOdometry(-58, 6, 310);
-  driveToPointPID(-24, 24, 7, 310, 7, true, false);
-  turnLeftToHeadingSlowerKP(225);
-  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-  driveToPointPID(-48, 48, 7, 225, 7, true, false);
-  turnLeftToHeadingSlowerKP(180);
-  initializeOdometry(getXposition(), getYposition(), inert.heading(degrees));
-  driveToPointPID(-18, 34.325, 11, 180, 18, true, false);
+  AllMotorGroup.stop(hold);   
+  break;
+  case 2: //Skills 20
+  IntakeFrontGroup.spin(forward, 100, pct); 
+  Outtake.spin(reverse, 100, pct);
+  AllMotorGroup.spin(forward, 30, pct);
+  wait(3, sec);
+  AllMotorGroup.spin(reverse, 10, pct);
+  wait(5, sec);
+  AllMotorGroup.spin(forward, 20, pct);
+  wait(3, sec);
+  LeftMotorGroup.spin(forward, 15, pct);
+  RightMotorGroup.spin(reverse, 15, pct);
+  wait(775, msec);
+  AllMotorGroup.stop(hold);
+  
   break;
   case 3: //RIGHTCLUSTERL + Push
   initializeOdometry(-58, -6, 90);
