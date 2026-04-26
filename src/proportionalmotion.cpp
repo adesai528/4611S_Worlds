@@ -446,7 +446,7 @@ void turnRightToHeadingSlowerKP(double targetHeading){
 }   
 
 void turnLeftToHeadingSlowestKP(double targetHeading){
-    double kp = .3287;
+    double kp = .3187;
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
@@ -465,7 +465,7 @@ void turnLeftToHeadingSlowestKP(double targetHeading){
 }
 
 void turnRightToHeadingSlowestKP(double targetHeading){
-    double kp = .3287; //og:3187
+    double kp = .3187; //og:3187
     targetHeading = wrapAngle(targetHeading);
 
     double currentHeading = wrapAngle(inert.heading(degrees));
