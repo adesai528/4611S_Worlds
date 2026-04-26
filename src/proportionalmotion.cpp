@@ -481,5 +481,4 @@ void turnRightToHeadingSlowestKP(double targetHeading){
     }
     LeftMotorGroup.stop(brake);
     RightMotorGroup.stop(brake);   
-}   
-
+}

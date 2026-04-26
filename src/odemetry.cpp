@@ -112,8 +112,6 @@ void initializeOdometry(float x, float y, float heading) {
 }
 
 
-
-
 // #include "vex.h"
 // #include "robotconfig.h"
 // #include "common.h"
